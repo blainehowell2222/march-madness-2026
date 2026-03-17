@@ -214,6 +214,12 @@ select:focus, input:focus { border-color: #E8650A; }
             <option value="">Select team...</option>
           </select>
         </div>
+        <div class="form-group" id="loser-group" style="display:none;">
+          <label>Losing team</label>
+          <select id="inp-loser">
+            <option value="">Select loser...</option>
+          </select>
+        </div>
         <div class="form-group">
           <label>Win type</label>
           <div style="display:flex;gap:6px;">
@@ -472,11 +478,11 @@ function populateTeamDropdown() {
   // Smart default: figure out which round we're on based on games logged
   if(!roundSel.value) {
     const roundOrder = ["Round of 64","Round of 32","Sweet 16","Elite 8","Final Four","Championship"];
-    const allLogged = Object.values(games);
+    const roundCounts = [32, 16, 8, 4, 2, 1];
     let defaultRound = "Round of 64";
-    for(const r of roundOrder) {
-      const winners = allLogged.filter(g => g.round === r).length;
-      if(winners === 0) { defaultRound = r; break; }
+    for(let i = 0; i < roundOrder.length; i++) {
+      const logged = Object.values(games).filter(g => g.round === roundOrder[i]).length;
+      if(logged < roundCounts[i]) { defaultRound = roundOrder[i]; break; }
     }
     roundSel.value = defaultRound;
   }
@@ -534,9 +540,15 @@ function populateTeamDropdown() {
     const prevWinners = Object.values(games)
       .filter(g => g.round === prevRound)
       .map(g => g.team)
-      .filter(t => !alreadyWonThisRound.has(t) && !alreadyLostThisRound.has(t));
+      .filter(t => !alreadyWonThisRound.has(t));
+    
+    // Also remove teams logged as losers in this round
+    const alreadyLostThisRound2 = new Set(
+      Object.values(games).filter(g => g.round === selectedRound && g.loser).map(g => g.loser)
+    );
+    const filteredWinners = prevWinners.filter(t => !alreadyLostThisRound2.has(t));
 
-    if(!prevWinners.length) {
+    if(!filteredWinners.length) {
       const o = document.createElement("option");
       o.disabled = true;
       o.textContent = prevRound ? `── No ${prevRound} results logged yet ──` : "── Select a round first ──";
@@ -544,7 +556,7 @@ function populateTeamDropdown() {
       return;
     }
 
-    prevWinners.forEach(name => {
+    filteredWinners.forEach(name => {
       const o = document.createElement("option");
       o.value = name;
       const seed = TEAM_DATA[name] ? `(${TEAM_DATA[name].seed}) ` : "";
@@ -559,11 +571,10 @@ window.autoFillOwnerAndType = () => {
   if(!team) return;
   const round = document.getElementById("inp-round").value;
 
-  // Auto-detect favored or upset using original seed from TEAM_DATA
+  // Auto-detect favored or upset for Round of 64 only
   const data = TEAM_DATA[team];
-  if(data) {
-    const isUpset = data.seed > data.opponentSeed;
-    window.selectType(isUpset ? "Upset" : "Favored");
+  if(data && round === "Round of 64") {
+    window.selectType(data.seed > data.opponentSeed ? "Upset" : "Favored");
   } else {
     window.selectType("");
   }
@@ -576,6 +587,29 @@ window.autoFillOwnerAndType = () => {
   ownerSel.innerHTML = owner
     ? `<option value="${owner}">${owner}</option>`
     : `<option value="">Not drafted</option>`;
+
+  // Show loser dropdown for rounds after 64
+  const loserGroup = document.getElementById("loser-group");
+  const loserSel = document.getElementById("inp-loser");
+  if(round && round !== "Round of 64") {
+    loserGroup.style.display = "flex";
+    const roundOrder = ["Round of 64","Round of 32","Sweet 16","Elite 8","Final Four","Championship"];
+    const roundIndex = roundOrder.indexOf(round);
+    const prevRound = roundIndex > 0 ? roundOrder[roundIndex - 1] : null;
+    const alreadyWon = new Set(Object.values(games).filter(g => g.round === round).map(g => g.team));
+    const alreadyLost = new Set(Object.values(games).filter(g => g.round === round && g.loser).map(g => g.loser));
+    const prevWinners = prevRound
+      ? Object.values(games).filter(g => g.round === prevRound).map(g => g.team).filter(t => t !== team && !alreadyWon.has(t) && !alreadyLost.has(t))
+      : [];
+    loserSel.innerHTML = '<option value="">Select loser...</option>' +
+      prevWinners.map(t => {
+        const seed = TEAM_DATA[t] ? `(${TEAM_DATA[t].seed}) ` : "";
+        return `<option value="${t}">${seed}${t}</option>`;
+      }).join("");
+  } else {
+    loserGroup.style.display = "none";
+    loserSel.value = "";
+  }
 };
 
 window.selectType = (t) => {
@@ -589,10 +623,14 @@ window.logGame = async () => {
   const owner = document.getElementById("inp-owner").value;
   const team  = document.getElementById("inp-team").value;
   const msg   = document.getElementById("form-msg");
+  const loser = document.getElementById("inp-loser")?.value || "";
   if(!round||!owner||!team||!selectedType) { msg.className=""; msg.textContent="Fill in all fields."; return; }
-  await push(gamesRef, {round, owner, team, type:selectedType, ts:Date.now()});
+  if(round !== "Round of 64" && !loser) { msg.className=""; msg.textContent="Please select the losing team."; return; }
+  await push(gamesRef, {round, owner, team, loser, type:selectedType, ts:Date.now()});
   document.getElementById("inp-team").value = "";
   document.getElementById("inp-owner").innerHTML = '<option value="">Auto-filled...</option>';
+  if(document.getElementById("inp-loser")) document.getElementById("inp-loser").value = "";
+  document.getElementById("loser-group").style.display = "none";
   window.selectType("");
   populateTeamDropdown();
   const pts = selectedType==="Upset"?2:1;
@@ -801,11 +839,16 @@ function renderBracket() {
   const teamOwner = {};
   Object.values(allPicks).forEach(p => { teamOwner[p.team] = p.player; });
 
-  // Build set of eliminated teams (lost a game)
+  // Build set of eliminated teams
   const eliminated = new Set();
   Object.values(games).forEach(g => {
-    const data = TEAM_DATA[g.team];
-    if(data && data.opponent) eliminated.add(data.opponent);
+    // Round of 64: use TEAM_DATA to find opponent
+    if(g.round === "Round of 64") {
+      const data = TEAM_DATA[g.team];
+      if(data && data.opponent) eliminated.add(data.opponent);
+    }
+    // Later rounds: use stored loser field
+    if(g.loser) eliminated.add(g.loser);
   });
 
   const regionColors = {East:"#378ADD", South:"#1D9E75", West:"#D85A30", Midwest:"#7F77DD"};
