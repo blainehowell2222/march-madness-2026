@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>March Madness 2026</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,26 +20,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; b
 .tab.hidden { display: none; }
 .panel { display: none; padding: 16px; background: #fff; }
 .panel.active { display: block; }
+
 .lb-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; margin-bottom: 6px; background: #fff; border: 0.5px solid #e0e0e0; }
 .lb-name { flex: 1; font-size: 14px; font-weight: 500; color: #111; }
 .lb-pts { font-size: 22px; font-weight: 500; color: #E8650A; min-width: 36px; text-align: right; }
 .lb-prize { font-size: 12px; font-weight: 500; color: #2a7a2a; min-width: 36px; text-align: right; }
 .lb-bar-wrap { flex: 1; height: 4px; background: #eee; border-radius: 2px; max-width: 80px; }
 .lb-bar { height: 4px; background: #E8650A; border-radius: 2px; transition: width 0.4s; }
+
 .form-box { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 16px; margin-bottom: 14px; }
 .form-box h3 { font-size: 14px; font-weight: 500; margin-bottom: 12px; color: #111; }
 .form-row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
 .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 130px; }
 .form-group label { font-size: 11px; color: #888; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
-select, input[type="text"], input[type="password"] { font-size: 13px; padding: 8px 10px; border-radius: 8px; border: 0.5px solid #ccc; background: #fff; color: #111; outline: none; width: 100%; }
+
+select, input[type="text"], input[type="password"] {
+  font-size: 13px; padding: 8px 10px; border-radius: 8px; border: 0.5px solid #ccc; background: #fff; color: #111; outline: none; width: 100%;
+}
 select:focus, input:focus { border-color: #E8650A; }
-.rtog { flex: 1; padding: 8px; border-radius: 8px; border: 0.5px solid #ddd; background: #f5f5f5; color: #888; font-size: 12px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.15s; }
-.rtog.sel-fav { background: #E6F1FB; border-color: #378ADD; color: #185FA5; }
-.rtog.sel-ups { background: #FAEEDA; border-color: #BA7517; color: #854F0B; }
+
 .btn-primary { width: 100%; padding: 10px; border-radius: 8px; background: #E8650A; color: white; border: none; font-size: 14px; font-weight: 500; cursor: pointer; }
 .btn-primary:hover { opacity: 0.88; }
 .btn-danger { width: 100%; padding: 8px; border-radius: 8px; background: none; color: #c00; border: 0.5px solid #c00; font-size: 12px; cursor: pointer; margin-top: 6px; }
 .btn-ghost { width: 100%; padding: 8px; border-radius: 8px; background: none; color: #888; border: 0.5px solid #ccc; font-size: 12px; cursor: pointer; margin-top: 4px; }
+
 .empty { text-align: center; padding: 24px; color: #aaa; font-size: 13px; }
 .log-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; margin-bottom: 5px; font-size: 12px; background: #fff; border: 0.5px solid #e0e0e0; }
 .log-round { font-size: 10px; color: #aaa; min-width: 66px; }
@@ -49,6 +53,7 @@ select:focus, input:focus { border-color: #E8650A; }
 .badge-pts { background: #EAF3DE; color: #3B6D11; }
 .del-btn { background: none; border: none; cursor: pointer; color: #ccc; font-size: 16px; padding: 0 2px; }
 .del-btn:hover { color: #E24B4A; }
+
 .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
 .stat-card { background: #f5f5f5; border-radius: 8px; padding: 10px 12px; }
 .stat-label { font-size: 11px; color: #888; margin-bottom: 4px; }
@@ -56,6 +61,7 @@ select:focus, input:focus { border-color: #E8650A; }
 .sec-title { font-size: 11px; font-weight: 500; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin: 14px 0 6px; }
 .round-badge { display: inline-block; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 500; margin: 2px; background: #f0f0f0; color: #888; border: 0.5px solid #ddd; }
 .round-badge.active-round { background: #E8650A; color: white; border-color: #E8650A; }
+
 .bk-match { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin-bottom: 6px; }
 .bk-team { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-bottom: 0.5px solid #f0f0f0; }
 .bk-team:last-child { border-bottom: none; }
@@ -63,8 +69,10 @@ select:focus, input:focus { border-color: #E8650A; }
 .bk-name { flex: 1; font-size: 13px; color: #111; }
 .bk-own { font-size: 10px; color: #aaa; font-style: italic; }
 .bk-playin { background: #FFFBF0; }
+
 .draft-team-btn { display: flex; align-items: center; padding: 10px 12px; background: #fff; border: 0.5px solid #e0e0e0; border-radius: 8px; margin-bottom: 5px; cursor: pointer; font-size: 13px; font-weight: 500; color: #111; }
 .draft-team-btn:hover { background: #FFF3EC; border-color: #E8650A; }
+
 .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 999; display: flex; align-items: center; justify-content: center; }
 .modal-box { background: white; border-radius: 16px; padding: 28px 24px; width: 90%; max-width: 320px; text-align: center; }
 .modal-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
@@ -72,180 +80,196 @@ select:focus, input:focus { border-color: #E8650A; }
 .modal-input { width: 100%; padding: 10px; font-size: 15px; border-radius: 8px; border: 0.5px solid #ccc; outline: none; text-align: center; margin-bottom: 10px; }
 #form-msg { font-size: 12px; margin-top: 8px; min-height: 16px; color: #c00; }
 #form-msg.ok { color: #2a7a2a; }
+
 .status-bar { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 3px; display: flex; align-items: center; gap: 4px; }
 </style>
 </head>
 <body>
 <div class="app">
-<div style="border:0.5px solid #ddd;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-
-  <div class="header">
-    <div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:17px;font-weight:500;">March Madness 2026</span>
-        <span class="admin-badge" id="admin-badge" onclick="showPwModal()">ADMIN</span>
-      </div>
-      <div style="font-size:13px;opacity:0.85;">8 players · $400 pot · Snake draft</div>
-      <div class="status-bar"><span class="sync-dot" id="sync-dot"></span><span id="sync-status">Connecting...</span></div>
-    </div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('leaderboard')">Leaderboard</button>
-    <button class="tab" onclick="switchTab('history')">History</button>
-    <button class="tab" onclick="switchTab('stats')">Stats</button>
-    <button class="tab" onclick="switchTab('bracket')">Bracket</button>
-    <button class="tab" onclick="switchTab('draft')">Draft</button>
-    <button class="tab hidden" id="tab-log-btn" onclick="switchTab('log-game')">Log Game</button>
-  </div>
-
-  <!-- LEADERBOARD -->
-  <div id="tab-leaderboard" class="panel active">
-    <div id="champion-banner" style="display:none;"></div>
-    <div id="lb-list"><div class="empty">Connecting...</div></div>
-    <div style="font-size:11px;color:#aaa;text-align:center;padding-top:4px;">1 pt · favored &nbsp;|&nbsp; 2 pts · upset &nbsp;|&nbsp; prizes: 🥇$200 · 🥈$125 · 🥉$75</div>
-  </div>
-
-  <!-- HISTORY -->
-  <div id="tab-history" class="panel">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <span style="font-size:13px;font-weight:500;color:#111;">Game log</span>
-      <select id="filter-round" onchange="renderHistory()" style="font-size:12px;width:auto;padding:4px 8px;border-radius:6px;border:0.5px solid #ccc;">
-        <option value="">All rounds</option>
-        <option>Round of 64</option><option>Round of 32</option><option>Sweet 16</option>
-        <option>Elite 8</option><option>Final Four</option><option>Championship</option>
-      </select>
-    </div>
-    <div id="history-list"></div>
-  </div>
-
-  <!-- STATS -->
-  <div id="tab-stats" class="panel">
-    <div class="stat-grid" id="stat-cards"></div>
-    <div class="sec-title">Rounds played</div>
-    <div id="rounds-played"></div>
-    <div class="sec-title">Points by player</div>
-    <div id="player-bars"></div>
-  </div>
-
-  <!-- BRACKET -->
-  <div id="tab-bracket" class="panel">
-    <div id="bracket-content"><div class="empty">Draft hasn't started yet — bracket will update live as teams are picked.</div></div>
-  </div>
-
-  <!-- DRAFT -->
-  <div id="tab-draft" class="panel">
-    <div id="draft-who-view" style="display:none;">
-      <div style="text-align:center;padding:8px 0 16px;">
-        <div style="font-size:28px;margin-bottom:8px;">🏀</div>
-        <div style="font-size:15px;font-weight:500;color:#111;margin-bottom:4px;">Who are you?</div>
-        <div style="font-size:12px;color:#888;margin-bottom:16px;">Select your name for the draft</div>
-        <div id="draft-who-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+  <div style="border:0.5px solid #ddd;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+    <div class="header">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:17px;font-weight:500;">March Madness 2026</span>
+          <span class="admin-badge" id="admin-badge" onclick="showPwModal()">ADMIN</span>
+        </div>
+        <div style="font-size:13px;opacity:0.85;">8 players · $400 pot · Snake draft</div>
+        <div class="status-bar"><span class="sync-dot" id="sync-dot"></span><span id="sync-status">Connecting...</span></div>
       </div>
     </div>
-    <div id="draft-setup-view" style="display:none;">
-      <div style="background:#fff3e0;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#854F0B;">
-        Admin: set the draft order after drawing numbers, then start the draft.
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('leaderboard')">Leaderboard</button>
+      <button class="tab" onclick="switchTab('history')">History</button>
+      <button class="tab" onclick="switchTab('stats')">Stats</button>
+      <button class="tab" onclick="switchTab('bracket')">Bracket</button>
+      <button class="tab" onclick="switchTab('draft')">Draft</button>
+      <button class="tab hidden" id="tab-log-btn" onclick="switchTab('log-game')">Log Game</button>
+    </div>
+
+    <div id="tab-leaderboard" class="panel active">
+      <div id="champion-banner" style="display:none;"></div>
+      <div id="lb-list"><div class="empty">Connecting...</div></div>
+      <div style="font-size:11px;color:#aaa;text-align:center;padding-top:4px;">1 pt · favored &nbsp;|&nbsp; 2 pts · upset &nbsp;|&nbsp; prizes: 🥇$200 · 🥈$125 · 🥉$75</div>
+    </div>
+
+    <div id="tab-history" class="panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:500;color:#111;">Game log</span>
+        <select id="filter-round" onchange="renderHistory()" style="font-size:12px;width:auto;padding:4px 8px;border-radius:6px;border:0.5px solid #ccc;">
+          <option value="">All rounds</option>
+          <option>Round of 64</option>
+          <option>Round of 32</option>
+          <option>Sweet 16</option>
+          <option>Elite 8</option>
+          <option>Final Four</option>
+          <option>Championship</option>
+        </select>
       </div>
+      <div id="history-list"></div>
+    </div>
+
+    <div id="tab-stats" class="panel">
+      <div class="stat-grid" id="stat-cards"></div>
+      <div class="sec-title">Rounds played</div>
+      <div id="rounds-played"></div>
+      <div class="sec-title">Points by player</div>
+      <div id="player-bars"></div>
+    </div>
+
+    <div id="tab-bracket" class="panel">
+      <div id="bracket-content"><div class="empty">Draft hasn't started yet — bracket will update live as teams are picked.</div></div>
+    </div>
+
+    <div id="tab-draft" class="panel">
+      <div id="draft-who-view" style="display:none;">
+        <div style="text-align:center;padding:8px 0 16px;">
+          <div style="font-size:28px;margin-bottom:8px;">🏀</div>
+          <div style="font-size:15px;font-weight:500;color:#111;margin-bottom:4px;">Who are you?</div>
+          <div style="font-size:12px;color:#888;margin-bottom:16px;">Select your name for the draft</div>
+          <div id="draft-who-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+      </div>
+
+      <div id="draft-setup-view" style="display:none;">
+        <div style="background:#fff3e0;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:#854F0B;">
+          Admin: set the draft order after drawing numbers, then start the draft.
+        </div>
+        <div class="form-box">
+          <h3>Set draft order</h3>
+          <div id="draft-order-inputs"></div>
+          <button class="btn-primary" onclick="saveDraftOrder()" style="margin-top:8px;">Save &amp; start draft</button>
+          <div id="draft-setup-msg" style="font-size:12px;margin-top:8px;min-height:16px;color:#c00;"></div>
+        </div>
+      </div>
+
+      <div id="draft-not-started-view" style="display:none;">
+        <div class="empty">Draft hasn't started yet.<br>Check back soon!</div>
+      </div>
+
+      <div id="draft-active-view" style="display:none;">
+        <div id="draft-status-card" style="background:#E8650A;color:white;border-radius:12px;padding:16px;margin-bottom:14px;text-align:center;">
+          <div style="font-size:12px;opacity:0.85;margin-bottom:4px;" id="draft-round-label">Round 1 · Pick 1 of 64</div>
+          <div style="font-size:22px;font-weight:500;" id="draft-current-player">...</div>
+          <div style="font-size:13px;opacity:0.85;margin-top:2px;" id="draft-turn-label">it's your pick!</div>
+        </div>
+
+        <div id="draft-my-turn-view" style="display:none;">
+          <div style="font-size:12px;color:#888;margin-bottom:8px;">Tap a team to draft it</div>
+          <input type="text" id="draft-search" placeholder="Search teams..." oninput="filterTeams()" style="margin-bottom:10px;" />
+          <div id="draft-teams-list"></div>
+        </div>
+
+        <div id="draft-waiting-view" style="display:none;text-align:center;padding:20px;color:#888;font-size:13px;"></div>
+
+        <div style="margin-top:14px;">
+          <div class="sec-title">Recent picks</div>
+          <div id="draft-picks-log"></div>
+        </div>
+
+        <div id="draft-admin-controls" style="display:none;margin-top:8px;">
+          <button class="btn-danger" onclick="resetDraft()">🗑 Reset entire draft</button>
+        </div>
+      </div>
+
+      <div id="draft-complete-view" style="display:none;">
+        <div style="background:#EAF3DE;border-radius:12px;padding:20px;text-align:center;margin-bottom:14px;">
+          <div style="font-size:24px;margin-bottom:8px;">🏆</div>
+          <div style="font-size:16px;font-weight:500;color:#27500A;">Draft complete!</div>
+        </div>
+        <div class="sec-title">Draft results</div>
+        <div id="draft-final-results"></div>
+        <button class="btn-danger" id="draft-reset-btn" style="display:none;margin-top:8px;" onclick="resetDraft()">🗑 Reset draft</button>
+      </div>
+    </div>
+
+    <div id="tab-log-game" class="panel">
       <div class="form-box">
-        <h3>Set draft order</h3>
-        <div id="draft-order-inputs"></div>
-        <button class="btn-primary" onclick="saveDraftOrder()" style="margin-top:8px;">Save &amp; start draft</button>
-        <div id="draft-setup-msg" style="font-size:12px;margin-top:8px;min-height:16px;color:#c00;"></div>
-      </div>
-    </div>
-    <div id="draft-not-started-view" style="display:none;">
-      <div class="empty">Draft hasn't started yet.<br>Check back soon!</div>
-    </div>
-    <div id="draft-active-view" style="display:none;">
-      <div id="draft-status-card" style="background:#E8650A;color:white;border-radius:12px;padding:16px;margin-bottom:14px;text-align:center;">
-        <div style="font-size:12px;opacity:0.85;margin-bottom:4px;" id="draft-round-label">Round 1 · Pick 1 of 64</div>
-        <div style="font-size:22px;font-weight:500;" id="draft-current-player">...</div>
-        <div style="font-size:13px;opacity:0.85;margin-top:2px;" id="draft-turn-label">it's your pick!</div>
-      </div>
-      <div id="draft-my-turn-view" style="display:none;">
-        <div style="font-size:12px;color:#888;margin-bottom:8px;">Tap a team to draft it</div>
-        <input type="text" id="draft-search" placeholder="Search teams..." oninput="filterTeams()" style="margin-bottom:10px;"/>
-        <div id="draft-teams-list"></div>
-      </div>
-      <div id="draft-waiting-view" style="display:none;text-align:center;padding:20px;color:#888;font-size:13px;"></div>
-      <div style="margin-top:14px;">
-        <div class="sec-title">Recent picks</div>
-        <div id="draft-picks-log"></div>
-      </div>
-      <div id="draft-admin-controls" style="display:none;margin-top:8px;">
-        <button class="btn-danger" onclick="resetDraft()">🗑 Reset entire draft</button>
-      </div>
-    </div>
-    <div id="draft-complete-view" style="display:none;">
-      <div style="background:#EAF3DE;border-radius:12px;padding:20px;text-align:center;margin-bottom:14px;">
-        <div style="font-size:24px;margin-bottom:8px;">🏆</div>
-        <div style="font-size:16px;font-weight:500;color:#27500A;">Draft complete!</div>
-      </div>
-      <div class="sec-title">Draft results</div>
-      <div id="draft-final-results"></div>
-      <button class="btn-danger" id="draft-reset-btn" style="display:none;margin-top:8px;" onclick="resetDraft()">🗑 Reset draft</button>
-    </div>
-  </div>
+        <h3>Log a game result</h3>
 
-  <!-- LOG GAME -->
-  <div id="tab-log-game" class="panel">
-    <div class="form-box">
-      <h3>Log a game result</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Round</label>
-          <select id="inp-round" onchange="document.getElementById('inp-team').value='';document.getElementById('inp-owner').innerHTML='<option value=\\'\\'>Auto-filled...</option>';document.getElementById('loser-group').style.display='none';window.selectType('');populateTeamDropdown()">
-            <option value="">Select round...</option>
-            <option>Round of 64</option><option>Round of 32</option><option>Sweet 16</option>
-            <option>Elite 8</option><option>Final Four</option><option>Championship</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Winning owner</label>
-          <select id="inp-owner" style="color:#185FA5;font-weight:500;">
-            <option value="">Auto-filled...</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Winning team</label>
-          <select id="inp-team" onchange="autoFillOwnerAndType()">
-            <option value="">Select team...</option>
-          </select>
-        </div>
-        <div class="form-group" id="loser-group" style="display:none;">
-          <label>Losing team</label>
-          <select id="inp-loser">
-            <option value="">Select loser...</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Win type</label>
-          <div style="display:flex;gap:6px;">
-            <div class="rtog" id="tog-fav" onclick="selectType('Favored')">Favored<br><span style="font-size:10px;font-weight:400;">1 pt</span></div>
-            <div class="rtog" id="tog-ups" onclick="selectType('Upset')">Upset<br><span style="font-size:10px;font-weight:400;">2 pts</span></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Round</label>
+            <select id="inp-round" onchange="populateMatchupDropdown()">
+              <option value="">Select round...</option>
+              <option>Round of 64</option>
+              <option>Round of 32</option>
+              <option>Sweet 16</option>
+              <option>Elite 8</option>
+              <option>Final Four</option>
+              <option>Championship</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Matchup</label>
+            <select id="inp-matchup" onchange="populateWinnerDropdown()">
+              <option value="">Select matchup...</option>
+            </select>
           </div>
         </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Winner</label>
+            <select id="inp-winner" onchange="previewGameMeta()">
+              <option value="">Select winner...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Winning owner</label>
+            <select id="inp-owner" style="color:#185FA5;font-weight:500;">
+              <option value="">Auto-filled...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Auto result</label>
+            <div id="game-preview" style="font-size:13px;color:#555;padding:10px 12px;background:#f7f7f7;border:0.5px solid #ddd;border-radius:8px;min-height:40px;display:flex;align-items:center;">
+              Select a matchup and winner...
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="logGame()">Add result</button>
+        <div id="form-msg"></div>
       </div>
-      <button class="btn-primary" onclick="logGame()">Add result</button>
-      <div id="form-msg"></div>
+
+      <button class="btn-danger" onclick="clearAll()">🗑 Clear all game data</button>
+      <button class="btn-ghost" onclick="logout()">🔒 Lock admin</button>
     </div>
-    <button class="btn-danger" onclick="clearAll()">🗑 Clear all game data</button>
-    <button class="btn-ghost" onclick="logout()">🔒 Lock admin</button>
   </div>
-
-</div>
 </div>
 
-<!-- Password Modal -->
 <div class="modal-overlay" id="pw-modal" style="display:none;">
   <div class="modal-box">
     <div style="font-size:28px;margin-bottom:8px;">🔐</div>
     <h3>Admin Access</h3>
     <p>Enter password to log games</p>
-    <input class="modal-input" type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()"/>
+    <input class="modal-input" type="password" id="pw-input" placeholder="Password" onkeydown="if(event.key==='Enter')checkPw()" />
     <button class="btn-primary" onclick="checkPw()">Unlock</button>
     <button class="btn-ghost" onclick="hidePwModal()" style="margin-top:8px;">Cancel</button>
     <div style="font-size:12px;color:#c00;margin-top:8px;min-height:16px;" id="pw-error"></div>
@@ -256,7 +280,9 @@ select:focus, input:focus { border-color: #E8650A; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, push, remove, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-const app = initializeApp({ databaseURL: "https://march-madness-bde59-default-rtdb.firebaseio.com/" });
+const app = initializeApp({
+  databaseURL: "https://march-madness-bde59-default-rtdb.firebaseio.com/"
+});
 const db = getDatabase(app);
 const gamesRef = ref(db, "games");
 const draftRef = ref(db, "draft");
@@ -264,7 +290,37 @@ const draftOrderRef = ref(db, "draftOrder");
 
 const PLAYERS = ["Mitch","Blaine","Josh","Kent","Guy","Carson","Sutton","Shane"];
 const PRIZES = [200, 125, 75];
-const PASSWORD = "12Cowboys";
+const PASSWORD = "ChangeMe123!";
+
+const ROUND_ORDER = [
+  "Round of 64",
+  "Round of 32",
+  "Sweet 16",
+  "Elite 8",
+  "Final Four",
+  "Championship"
+];
+
+const ROUND_WIN_COUNTS = {
+  "Round of 64": 32,
+  "Round of 32": 16,
+  "Sweet 16": 8,
+  "Elite 8": 4,
+  "Final Four": 2,
+  "Championship": 1
+};
+
+const SEED_MATCHUPS = [
+  [1,16],
+  [8,9],
+  [5,12],
+  [4,13],
+  [6,11],
+  [3,14],
+  [7,10],
+  [2,15]
+];
+
 const ALL_TEAMS_BY_REGION = {
   "East": [
     {seed:1,name:"Duke"},{seed:2,name:"UConn"},{seed:3,name:"Michigan State"},
@@ -295,156 +351,8 @@ const ALL_TEAMS_BY_REGION = {
     {seed:13,name:"Hofstra"},{seed:14,name:"Wright State"},{seed:15,name:"Tennessee State"},{seed:16,name:"UMBC/Howard"}
   ]
 };
-const ALL_TEAMS = Object.values(ALL_TEAMS_BY_REGION).flat().map(t=>t.name);
 
-let games = {}, draftState = {}, draftOrder = [], allPicks = {};
-let selectedType = "", currentTab = "leaderboard", isAdmin = false;
-
-if(sessionStorage.getItem("mm_admin") === "1") unlockAdmin();
-
-onValue(gamesRef, snap => {
-  games = snap.val() || {};
-  document.getElementById("sync-dot").className = "sync-dot";
-  document.getElementById("sync-status").textContent = "Live · updates automatically";
-  if(currentTab === "leaderboard") renderLeaderboard();
-  if(currentTab === "history") renderHistory();
-  if(currentTab === "stats") renderStats();
-  if(currentTab === "log-game") populateTeamDropdown();
-  renderBracket();
-}, () => {
-  document.getElementById("sync-dot").className = "sync-dot off";
-  document.getElementById("sync-status").textContent = "Connection lost";
-});
-
-onValue(draftOrderRef, snap => { draftOrder = snap.val() || []; });
-onValue(draftRef, snap => {
-  draftState = snap.val() || {};
-  allPicks = draftState.picks || {};
-  if(currentTab === "draft") renderDraftTab();
-  renderBracket();
-  renderLeaderboard();
-});
-
-function unlockAdmin() {
-  isAdmin = true;
-  sessionStorage.setItem("mm_admin", "1");
-  document.getElementById("tab-log-btn").classList.remove("hidden");
-  document.getElementById("admin-badge").textContent = "ADMIN ✓";
-}
-
-window.showPwModal = () => {
-  if(isAdmin) { switchTab("log-game"); return; }
-  document.getElementById("pw-modal").style.display = "flex";
-  setTimeout(() => document.getElementById("pw-input").focus(), 100);
-};
-window.hidePwModal = () => {
-  document.getElementById("pw-modal").style.display = "none";
-  document.getElementById("pw-input").value = "";
-  document.getElementById("pw-error").textContent = "";
-};
-window.checkPw = () => {
-  if(document.getElementById("pw-input").value === PASSWORD) {
-    unlockAdmin(); hidePwModal(); switchTab("log-game");
-  } else {
-    document.getElementById("pw-error").textContent = "Wrong password.";
-    document.getElementById("pw-input").value = "";
-  }
-};
-window.logout = () => {
-  isAdmin = false;
-  sessionStorage.removeItem("mm_admin");
-  document.getElementById("tab-log-btn").classList.add("hidden");
-  document.getElementById("admin-badge").textContent = "ADMIN";
-  switchTab("leaderboard");
-};
-
-window.switchTab = (id) => {
-  currentTab = id;
-  const ids = ["leaderboard","history","stats","bracket","draft","log-game"];
-  document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", ids[i]===id));
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-  document.getElementById("tab-"+id).classList.add("active");
-  if(id==="leaderboard") renderLeaderboard();
-  if(id==="history") renderHistory();
-  if(id==="stats") renderStats();
-  if(id==="draft") renderDraftTab();
-  if(id==="log-game") populateTeamDropdown();
-};
-
-function getScores() {
-  const s = {};
-  PLAYERS.forEach(p => s[p] = {fav:0, ups:0, total:0});
-  Object.values(games).forEach(g => {
-    if(s[g.owner]) {
-      if(g.type==="Favored") { s[g.owner].fav++; s[g.owner].total++; }
-      if(g.type==="Upset")   { s[g.owner].ups++; s[g.owner].total+=2; }
-    }
-  });
-  return s;
-}
-
-function renderLeaderboard() {
-  // Check if championship has been logged
-  const championship = Object.values(games).find(g => g.round === "Championship");
-  const banner = document.getElementById("champion-banner");
-
-  if(championship) {
-    const champTeam = championship.team;
-    const allGames = Object.values(games);
-    const totalUpsets = allGames.filter(g => g.type === "Upset").length;
-    const biggestUpset = allGames
-      .filter(g => g.type === "Upset" && TEAM_DATA[g.team])
-      .sort((a,b) => TEAM_DATA[b.team].seed - TEAM_DATA[a.team].seed)[0];
-
-    // Find pool winner (most points)
-    const scores = getScores();
-    const sorted = PLAYERS.slice().sort((a,b) => scores[b].total - scores[a].total);
-    const poolWinner = sorted[0];
-    const poolWinnerPts = scores[poolWinner].total;
-    const pc = PLAYER_COLORS[poolWinner] || {bg:"#FFF3CD",color:"#854F0B"};
-
-    banner.style.display = "block";
-    banner.innerHTML = `
-      <div style="background:#1A1A2E;border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;color:white;">
-        <div style="font-size:48px;margin-bottom:8px;">🏆</div>
-        <div style="font-size:13px;opacity:0.8;margin-bottom:4px;">2026 Pool Champion</div>
-        <div style="font-size:28px;font-weight:500;margin-bottom:4px;">${poolWinner}</div>
-        <div style="font-size:14px;opacity:0.7;margin-bottom:8px;">${poolWinnerPts} points · $200</div>
-        <div style="font-size:12px;opacity:0.6;margin-bottom:14px;">NCAA Champion: ${champTeam}</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
-            <div style="font-size:11px;opacity:0.8;">Total upsets</div>
-            <div style="font-size:20px;font-weight:500;">${totalUpsets}</div>
-          </div>
-          <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
-            <div style="font-size:11px;opacity:0.8;">Biggest upset</div>
-            <div style="font-size:13px;font-weight:500;">${biggestUpset ? `(${TEAM_DATA[biggestUpset.team].seed}) ${biggestUpset.team}` : "—"}</div>
-          </div>
-        </div>
-      </div>`;
-  } else {
-    banner.style.display = "none";
-  }
-  const scores = getScores();
-  const sorted = PLAYERS.slice().sort((a,b) => scores[b].total - scores[a].total);
-  const max = Math.max(1, scores[sorted[0]].total);
-  const medals = ["🥇","🥈","🥉"];
-  document.getElementById("lb-list").innerHTML = sorted.map((p,i) => {
-    const s = scores[p];
-    const prize = i<3 && s.total>0 ? "$"+PRIZES[i] : "";
-    return `<div class="lb-row">
-      <div style="width:28px;font-size:15px;text-align:center;">${medals[i]||(i+1)}</div>
-      <div style="flex:1;"><div class="lb-name">${p}</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
-          <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(s.total/max*100)}%"></div></div>
-          <div style="font-size:10px;color:#aaa;">${s.fav}f · ${s.ups}u</div>
-        </div>
-      </div>
-      <div class="lb-pts">${s.total}</div>
-      <div class="lb-prize">${prize}</div>
-    </div>`;
-  }).join("") || '<div class="empty">No games logged yet</div>';
-}
+const ALL_TEAMS = Object.values(ALL_TEAMS_BY_REGION).flat().map(t => t.name);
 
 const TEAM_DATA = {
   "Duke":{seed:1,region:"East",opponent:"Siena",opponentSeed:16},
@@ -463,6 +371,7 @@ const TEAM_DATA = {
   "UCF":{seed:10,region:"East",opponent:"UCLA",opponentSeed:7},
   "UConn":{seed:2,region:"East",opponent:"Furman",opponentSeed:15},
   "Furman":{seed:15,region:"East",opponent:"UConn",opponentSeed:2},
+
   "Florida":{seed:1,region:"South",opponent:"Lehigh/Prairie View",opponentSeed:16},
   "Lehigh/Prairie View":{seed:16,region:"South",opponent:"Florida",opponentSeed:1},
   "Clemson":{seed:8,region:"South",opponent:"Iowa",opponentSeed:9},
@@ -479,6 +388,7 @@ const TEAM_DATA = {
   "Texas A&M":{seed:10,region:"South",opponent:"St. Mary's",opponentSeed:7},
   "Houston":{seed:2,region:"South",opponent:"Idaho",opponentSeed:15},
   "Idaho":{seed:15,region:"South",opponent:"Houston",opponentSeed:2},
+
   "Arizona":{seed:1,region:"West",opponent:"LIU",opponentSeed:16},
   "LIU":{seed:16,region:"West",opponent:"Arizona",opponentSeed:1},
   "Villanova":{seed:8,region:"West",opponent:"Utah State",opponentSeed:9},
@@ -495,6 +405,7 @@ const TEAM_DATA = {
   "Missouri":{seed:10,region:"West",opponent:"Miami",opponentSeed:7},
   "Purdue":{seed:2,region:"West",opponent:"Queens",opponentSeed:15},
   "Queens":{seed:15,region:"West",opponent:"Purdue",opponentSeed:2},
+
   "Michigan":{seed:1,region:"Midwest",opponent:"UMBC/Howard",opponentSeed:16},
   "UMBC/Howard":{seed:16,region:"Midwest",opponent:"Michigan",opponentSeed:1},
   "Georgia":{seed:8,region:"Midwest",opponent:"St. Louis",opponentSeed:9},
@@ -513,360 +424,6 @@ const TEAM_DATA = {
   "Tennessee State":{seed:15,region:"Midwest",opponent:"Iowa State",opponentSeed:2},
 };
 
-function populateTeamDropdown() {
-  const sel = document.getElementById("inp-team");
-  const roundSel = document.getElementById("inp-round");
-  if(!sel || !roundSel) return;
-
-  // Smart default: figure out which round we're on based on games logged
-  if(!roundSel.value) {
-    const roundOrder = ["Round of 64","Round of 32","Sweet 16","Elite 8","Final Four","Championship"];
-    const roundCounts = [32, 16, 8, 4, 2, 1];
-    let defaultRound = "Round of 64";
-    for(let i = 0; i < roundOrder.length; i++) {
-      const logged = Object.values(games).filter(g => g.round === roundOrder[i]).length;
-      if(logged < roundCounts[i]) { defaultRound = roundOrder[i]; break; }
-    }
-    roundSel.value = defaultRound;
-  }
-  const selectedRound = roundSel.value;
-
-  const roundOrder = ["Round of 64","Round of 32","Sweet 16","Elite 8","Final Four","Championship"];
-  const roundIndex = roundOrder.indexOf(selectedRound);
-  const prevRound = roundIndex > 0 ? roundOrder[roundIndex - 1] : null;
-
-  // Teams already logged as winners in the selected round
-  const alreadyWonThisRound = new Set(
-    Object.values(games).filter(g => g.round === selectedRound).map(g => g.team)
-  );
-  // Opponents of winners in this round (losers) - only applies to Round of 64 where we know matchups
-  const alreadyLostThisRound = new Set();
-  if(selectedRound === "Round of 64") {
-    Object.values(games).filter(g => g.round === selectedRound).forEach(g => {
-      const data = TEAM_DATA[g.team];
-      if(data && data.opponent) alreadyLostThisRound.add(data.opponent);
-    });
-  }
-
-  sel.innerHTML = '<option value="">Select team...</option>';
-
-  if(!selectedRound) return;
-
-  if(selectedRound === "Round of 64") {
-    // Build complete set of teams that have already played
-    const alreadyPlayed = new Set();
-    Object.values(games).filter(g => g.round === "Round of 64").forEach(g => {
-      alreadyPlayed.add(g.team); // winner
-      const data = TEAM_DATA[g.team];
-      if(data && data.opponent) alreadyPlayed.add(data.opponent); // loser
-    });
-
-    const regions = ["East","South","West","Midwest"];
-    regions.forEach(region => {
-      const available = Object.entries(TEAM_DATA)
-        .filter(([name, d]) => d.region === region && !alreadyPlayed.has(name))
-        .sort((a,b) => a[1].seed - b[1].seed);
-      if(!available.length) return;
-      const grp = document.createElement("option");
-      grp.disabled = true;
-      grp.textContent = `── ${region} ──`;
-      sel.appendChild(grp);
-      available.forEach(([name, d]) => {
-        const o = document.createElement("option");
-        o.value = name;
-        o.textContent = `(${d.seed}) ${name}`;
-        sel.appendChild(o);
-      });
-    });
-  } else {
-    // For later rounds: show winners from previous round that haven't played this round yet
-    const prevWinners = Object.values(games)
-      .filter(g => g.round === prevRound)
-      .map(g => g.team)
-      .filter(t => !alreadyWonThisRound.has(t));
-    
-    // Also remove teams logged as losers in this round
-    const alreadyLostThisRound2 = new Set(
-      Object.values(games).filter(g => g.round === selectedRound && g.loser).map(g => g.loser)
-    );
-    const filteredWinners = prevWinners.filter(t => !alreadyLostThisRound2.has(t));
-
-    if(!filteredWinners.length) {
-      const o = document.createElement("option");
-      o.disabled = true;
-      o.textContent = prevRound ? `── No ${prevRound} results logged yet ──` : "── Select a round first ──";
-      sel.appendChild(o);
-      return;
-    }
-
-    filteredWinners.forEach(name => {
-      const o = document.createElement("option");
-      o.value = name;
-      const seed = TEAM_DATA[name] ? `(${TEAM_DATA[name].seed}) ` : "";
-      o.textContent = `${seed}${name}`;
-      sel.appendChild(o);
-    });
-  }
-}
-
-window.autoFillOwnerAndType = () => {
-  const team = document.getElementById("inp-team").value;
-  if(!team) return;
-  const round = document.getElementById("inp-round").value;
-
-  // Auto-detect favored or upset for Round of 64 only
-  // For later rounds, only auto-select if nothing is chosen yet
-  const data = TEAM_DATA[team];
-  if(data && round === "Round of 64") {
-    window.selectType(data.seed > data.opponentSeed ? "Upset" : "Favored");
-  } else if(!selectedType) {
-    window.selectType("");
-  }
-
-  // Auto-fill owner from draft picks
-  const teamOwner = {};
-  Object.values(allPicks).forEach(p => { teamOwner[p.team] = p.player; });
-  const owner = teamOwner[team];
-  const ownerSel = document.getElementById("inp-owner");
-  ownerSel.innerHTML = owner
-    ? `<option value="${owner}">${owner}</option>`
-    : `<option value="">Not drafted</option>`;
-
-  // Show loser dropdown for rounds after 64
-  const loserGroup = document.getElementById("loser-group");
-  const loserSel = document.getElementById("inp-loser");
-  if(round && round !== "Round of 64") {
-    loserGroup.style.display = "flex";
-    const roundOrder = ["Round of 64","Round of 32","Sweet 16","Elite 8","Final Four","Championship"];
-    const roundIndex = roundOrder.indexOf(round);
-    const prevRound = roundIndex > 0 ? roundOrder[roundIndex - 1] : null;
-    const alreadyWon = new Set(Object.values(games).filter(g => g.round === round).map(g => g.team));
-    const alreadyLost = new Set(Object.values(games).filter(g => g.round === round && g.loser).map(g => g.loser));
-    const prevWinners = prevRound
-      ? Object.values(games).filter(g => g.round === prevRound).map(g => g.team).filter(t => t !== team && !alreadyWon.has(t) && !alreadyLost.has(t))
-      : [];
-    loserSel.innerHTML = '<option value="">Select loser...</option>' +
-      prevWinners.map(t => {
-        const seed = TEAM_DATA[t] ? `(${TEAM_DATA[t].seed}) ` : "";
-        return `<option value="${t}">${seed}${t}</option>`;
-      }).join("");
-  } else {
-    loserGroup.style.display = "none";
-    loserSel.value = "";
-  }
-};
-
-window.selectType = (t) => {
-  selectedType = t;
-  document.getElementById("tog-fav").className = "rtog"+(t==="Favored"?" sel-fav":"");
-  document.getElementById("tog-ups").className = "rtog"+(t==="Upset"?" sel-ups":"");
-};
-
-window.logGame = async () => {
-  const round = document.getElementById("inp-round").value;
-  const owner = document.getElementById("inp-owner").value;
-  const team  = document.getElementById("inp-team").value;
-  const msg   = document.getElementById("form-msg");
-  const loser = document.getElementById("inp-loser")?.value || "";
-  if(!round||!owner||!team||!selectedType) { msg.className=""; msg.textContent="Fill in all fields."; return; }
-  if(round !== "Round of 64" && !loser) { msg.className=""; msg.textContent="Please select the losing team."; return; }
-  await push(gamesRef, {round, owner, team, loser, type:selectedType, ts:Date.now()});
-  const pts = selectedType==="Upset" ? 2 : 1;
-  document.getElementById("inp-team").value = "";
-  document.getElementById("inp-owner").innerHTML = '<option value="">Auto-filled...</option>';
-  if(document.getElementById("inp-loser")) document.getElementById("inp-loser").value = "";
-  document.getElementById("loser-group").style.display = "none";
-  window.selectType("");
-  populateTeamDropdown();
-  msg.className="ok"; msg.textContent=`Added: ${team} (+${pts}pt for ${owner})`;
-  setTimeout(()=>{ msg.textContent=""; },3000);
-};
-
-window.renderHistory = () => {
-  const filter = document.getElementById("filter-round").value;
-  const all = Object.entries(games).sort((a,b)=>b[1].ts-a[1].ts);
-  const filtered = filter ? all.filter(([,g])=>g.round===filter) : all;
-  document.getElementById("history-list").innerHTML = filtered.length ? filtered.map(([key,g])=>`
-    <div class="log-item">
-      <div class="log-round">${g.round}</div>
-      <div><div style="font-weight:500;color:#111;">${g.team}</div><div style="color:#888;font-size:11px;">${g.owner}</div></div>
-      <span class="badge badge-${g.type==="Upset"?"ups":"fav"}">${g.type}</span>
-      <span class="badge badge-pts">+${g.type==="Upset"?2:1}pt</span>
-      ${isAdmin?`<button class="del-btn" onclick="deleteGame('${key}')">×</button>`:""}
-    </div>`).join("") : '<div class="empty">No games logged yet</div>';
-};
-
-window.deleteGame = async (key) => { await remove(ref(db,"games/"+key)); };
-window.clearAll = async () => { if(confirm("Clear ALL game data?")) { await remove(gamesRef); populateTeamDropdown(); } };
-
-function renderStats() {
-  const scores = getScores();
-  const all = Object.values(games);
-  const upsets = all.filter(g=>g.type==="Upset").length;
-  const rc = {};
-  all.forEach(g => { rc[g.round]=(rc[g.round]||0)+1; });
-  document.getElementById("stat-cards").innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total games</div><div class="stat-val">${all.length}</div></div>
-    <div class="stat-card"><div class="stat-label">Total points</div><div class="stat-val">${all.reduce((s,g)=>s+(g.type==="Upset"?2:1),0)}</div></div>
-    <div class="stat-card"><div class="stat-label">Upsets</div><div class="stat-val">${upsets}</div></div>
-    <div class="stat-card"><div class="stat-label">Upset rate</div><div class="stat-val">${all.length?Math.round(upsets/all.length*100):0}%</div></div>`;
-  document.getElementById("rounds-played").innerHTML = ["Round of 64","Round of 32","Sweet 16","Elite 8","Final Four","Championship"].map(r=>
-    `<span class="round-badge ${rc[r]?"active-round":""}">${r}${rc[r]?" ("+rc[r]+")":""}</span>`).join("");
-  const sorted = PLAYERS.slice().sort((a,b)=>scores[b].total-scores[a].total);
-  const max = Math.max(1, scores[sorted[0]].total);
-  document.getElementById("player-bars").innerHTML = sorted.map(p=>{
-    const s=scores[p];
-    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
-      <div style="font-size:12px;font-weight:500;min-width:56px;color:#111;">${p}</div>
-      <div style="flex:1;height:8px;background:#eee;border-radius:4px;"><div style="width:${Math.round(s.total/max*100)}%;height:8px;background:#E8650A;border-radius:4px;"></div></div>
-      <div style="font-size:12px;font-weight:500;min-width:20px;text-align:right;color:#111;">${s.total}</div>
-    </div>`;}).join("");
-}
-
-function getSnakePlayer(order, pickNum) {
-  const round = Math.floor(pickNum/8);
-  const pos = pickNum%8;
-  return order[round%2===0 ? pos : 7-pos];
-}
-
-function renderDraftTab() {
-  const sortedPicks = Object.values(allPicks).sort((a,b) => (a.pickNum||0) - (b.pickNum||0));
-  const picksCount = sortedPicks.length;
-  const started = draftState.started;
-  const complete = picksCount >= 64;
-  const myIdentity = sessionStorage.getItem("draft_identity");
-
-  document.getElementById("draft-who-view").style.display = "none";
-  document.getElementById("draft-setup-view").style.display = "none";
-  document.getElementById("draft-not-started-view").style.display = "none";
-  document.getElementById("draft-active-view").style.display = "none";
-  document.getElementById("draft-complete-view").style.display = "none";
-
-  if(complete) {
-    document.getElementById("draft-complete-view").style.display = "block";
-    if(isAdmin) document.getElementById("draft-reset-btn").style.display = "block";
-    renderFinalResults();
-    renderBracket();
-    return;
-  }
-
-  if(!started) {
-    if(isAdmin) {
-      document.getElementById("draft-setup-view").style.display = "block";
-      buildDraftOrderInputs();
-    } else {
-      document.getElementById("draft-not-started-view").style.display = "block";
-    }
-    return;
-  }
-
-  if(!myIdentity && !isAdmin) {
-    document.getElementById("draft-who-view").style.display = "block";
-    document.getElementById("draft-who-list").innerHTML = PLAYERS.map(p=>
-      `<button onclick="setDraftIdentity('${p}')" style="padding:10px;border-radius:8px;border:0.5px solid #ddd;background:#fff;font-size:14px;font-weight:500;color:#111;cursor:pointer;width:100%;">${p}</button>`
-    ).join("");
-    return;
-  }
-
-  document.getElementById("draft-active-view").style.display = "block";
-  if(isAdmin) document.getElementById("draft-admin-controls").style.display = "block";
-
-  const currentPlayer = getSnakePlayer(draftOrder, picksCount);
-  const round = Math.floor(picksCount/8)+1;
-  document.getElementById("draft-round-label").textContent = `Round ${round} · Pick ${picksCount+1} of 64`;
-  document.getElementById("draft-current-player").textContent = currentPlayer;
-
-  const draftedTeams = new Set(sortedPicks.map(p=>p.team));
-  const remaining = ALL_TEAMS.filter(t=>!draftedTeams.has(t));
-  const isMyTurn = isAdmin || myIdentity === currentPlayer;
-
-  if(isMyTurn) {
-    document.getElementById("draft-turn-label").textContent = "it's your pick!";
-    document.getElementById("draft-my-turn-view").style.display = "block";
-    document.getElementById("draft-waiting-view").style.display = "none";
-    const q = (document.getElementById("draft-search").value||"").toLowerCase();
-    const regionColors = {East:"#378ADD",South:"#1D9E75",West:"#D85A30",Midwest:"#7F77DD"};
-    document.getElementById("draft-teams-list").innerHTML = Object.entries(ALL_TEAMS_BY_REGION).map(([region, teams]) => {
-      const available = teams.filter(t => !draftedTeams.has(t.name));
-      if(!available.length) return "";
-      const filtered = available.filter(t => t.name.toLowerCase().includes(q));
-      if(!filtered.length) return "";
-      return `<div style="margin-bottom:12px;">
-        <div style="font-size:11px;font-weight:500;color:#fff;background:${regionColors[region]};padding:4px 10px;border-radius:6px;margin-bottom:6px;">${region}</div>
-        ${filtered.map(t=>`
-          <div class="draft-team-btn" data-name="${t.name}" onclick="makePick(this.dataset.name)">
-            <span style="font-size:11px;color:#aaa;min-width:20px;">${t.seed}</span>
-            <span style="flex:1;">${t.name}</span>
-            <span style="font-size:11px;color:#E8650A;font-weight:600;">Draft ›</span>
-          </div>`).join("")}
-      </div>`;
-    }).join("");
-  } else {
-    document.getElementById("draft-turn-label").textContent = "on the clock";
-    document.getElementById("draft-my-turn-view").style.display = "none";
-    document.getElementById("draft-waiting-view").style.display = "block";
-    document.getElementById("draft-waiting-view").textContent = `Waiting for ${currentPlayer} to pick...`;
-  }
-
-  const recent = sortedPicks.slice(-5).reverse();
-  document.getElementById("draft-picks-log").innerHTML = recent.length ? recent.map(p=>`
-    <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff;border:0.5px solid #e0e0e0;border-radius:8px;margin-bottom:4px;font-size:12px;">
-      <span style="font-weight:500;color:#111;flex:1;">${p.team}</span>
-      <span style="color:#888;">${p.player}</span>
-    </div>`).join("") : '<div class="empty" style="padding:12px;">No picks yet</div>';
-}
-
-function buildDraftOrderInputs() {
-  const mockOrder = {Mitch:1,Blaine:2,Carson:3,Guy:4,Josh:5,Shane:6,Sutton:7,Kent:8};
-  document.getElementById("draft-order-inputs").innerHTML = PLAYERS.map((p,i)=>`
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <div style="font-size:13px;min-width:60px;color:#111;">${p}</div>
-      <select id="draft-pos-${i}" style="flex:1;">
-        <option value="">Pick #...</option>
-        ${[1,2,3,4,5,6,7,8].map(n=>`<option value="${n}" ${mockOrder[p]===n?"selected":""}>${n}</option>`).join("")}
-      </select>
-    </div>`).join("");
-}
-
-window.saveDraftOrder = async () => {
-  const msg = document.getElementById("draft-setup-msg");
-  const order = new Array(8);
-  const used = new Set();
-  let valid = true;
-  PLAYERS.forEach((p,i) => {
-    const val = document.getElementById(`draft-pos-${i}`)?.value;
-    if(!val || used.has(val)) { valid=false; return; }
-    used.add(val);
-    order[parseInt(val)-1] = p;
-  });
-  if(!valid || order.some(x=>!x)) { msg.textContent="Assign each player a unique position."; return; }
-  msg.textContent = "";
-  await set(draftOrderRef, order);
-  await set(draftRef, { started:true, picks:{} });
-};
-
-window.setDraftIdentity = (name) => {
-  sessionStorage.setItem("draft_identity", name);
-  renderDraftTab();
-};
-
-window.filterTeams = () => { renderDraftTab(); };
-
-window.makePick = async (team) => {
-  const picksCount = Object.keys(allPicks).length;
-  if(picksCount >= 64) return;
-  const currentPlayer = getSnakePlayer(draftOrder, picksCount);
-  const myIdentity = sessionStorage.getItem("draft_identity");
-  if(!isAdmin && myIdentity !== currentPlayer) return;
-  await push(ref(db,"draft/picks"), {player:currentPlayer, team, pickNum:picksCount, ts:Date.now()});
-};
-
-window.resetDraft = async () => {
-  if(!confirm("Reset the entire draft? All picks will be lost.")) return;
-  await remove(draftRef);
-  await remove(draftOrderRef);
-};
-
 const PLAYER_COLORS = {
   Mitch:   {bg:"#E6F1FB", color:"#185FA5"},
   Blaine:  {bg:"#FFE8E0", color:"#993C1D"},
@@ -878,33 +435,783 @@ const PLAYER_COLORS = {
   Shane:   {bg:"#EAF3DE", color:"#27500A"},
 };
 
-function renderBracket() {
-  const complete = Object.keys(allPicks).length >= 64;
-  const teamOwner = {};
-  Object.values(allPicks).forEach(p => { teamOwner[p.team] = p.player; });
+let games = {};
+let draftState = {};
+let draftOrder = [];
+let allPicks = {};
+let currentTab = "leaderboard";
+let isAdmin = false;
 
-  // Build set of eliminated teams
-  const eliminated = new Set();
-  Object.values(games).forEach(g => {
-    // Round of 64: use TEAM_DATA to find opponent
-    if(g.round === "Round of 64") {
-      const data = TEAM_DATA[g.team];
-      if(data && data.opponent) eliminated.add(data.opponent);
-    }
-    // Later rounds: use stored loser field
-    if(g.loser) eliminated.add(g.loser);
+function getTeamBySeed(region, seed) {
+  return ALL_TEAMS_BY_REGION[region].find(t => t.seed === seed) || null;
+}
+
+function getRound64GamesForRegion(region) {
+  return SEED_MATCHUPS.map(([seed1, seed2], idx) => {
+    const t1 = getTeamBySeed(region, seed1);
+    const t2 = getTeamBySeed(region, seed2);
+    return {
+      id: `${region}-R64-${idx + 1}`,
+      round: "Round of 64",
+      region,
+      team1: t1?.name || null,
+      team2: t2?.name || null,
+      nextGameId: `${region}-R32-${Math.floor(idx / 2) + 1}`
+    };
+  });
+}
+
+function buildBracketTree() {
+  const tree = [];
+
+  ["East","South","West","Midwest"].forEach(region => {
+    const r64 = getRound64GamesForRegion(region);
+    tree.push(...r64);
+
+    const r32 = [1,2,3,4].map(i => ({
+      id: `${region}-R32-${i}`,
+      round: "Round of 32",
+      region,
+      sourceGame1: `${region}-R64-${(i - 1) * 2 + 1}`,
+      sourceGame2: `${region}-R64-${(i - 1) * 2 + 2}`,
+      nextGameId: `${region}-S16-${Math.floor((i - 1) / 2) + 1}`
+    }));
+    tree.push(...r32);
+
+    const s16 = [1,2].map(i => ({
+      id: `${region}-S16-${i}`,
+      round: "Sweet 16",
+      region,
+      sourceGame1: `${region}-R32-${(i - 1) * 2 + 1}`,
+      sourceGame2: `${region}-R32-${(i - 1) * 2 + 2}`,
+      nextGameId: `${region}-E8-1`
+    }));
+    tree.push(...s16);
+
+    tree.push({
+      id: `${region}-E8-1`,
+      round: "Elite 8",
+      region,
+      sourceGame1: `${region}-S16-1`,
+      sourceGame2: `${region}-S16-2}`,
+      nextGameId:
+        region === "East" ? "FF-1" :
+        region === "West" ? "FF-1" :
+        region === "South" ? "FF-2" :
+        "FF-2"
+    });
   });
 
-  const regionColors = {East:"#378ADD", South:"#1D9E75", West:"#D85A30", Midwest:"#7F77DD"};
+  tree.push({
+    id: "FF-1",
+    round: "Final Four",
+    sourceGame1: "East-E8-1",
+    sourceGame2: "West-E8-1",
+    nextGameId: "CHAMP-1"
+  });
+
+  tree.push({
+    id: "FF-2",
+    round: "Final Four",
+    sourceGame1: "South-E8-1",
+    sourceGame2: "Midwest-E8-1",
+    nextGameId: "CHAMP-1"
+  });
+
+  tree.push({
+    id: "CHAMP-1",
+    round: "Championship",
+    sourceGame1: "FF-1",
+    sourceGame2: "FF-2"
+  });
+
+  return tree;
+}
+
+// fix typo in one sourceGame2 string if needed by rebuilding cleanly:
+const BRACKET_TREE = (() => {
+  const raw = buildBracketTree();
+  return raw.map(g => ({
+    ...g,
+    sourceGame2: g.sourceGame2 === `${g.region}-S16-2}` ? `${g.region}-S16-2` : g.sourceGame2
+  }));
+})();
+
+function getTeamOwnerMap() {
+  const map = {};
+  Object.values(allPicks).forEach(p => { map[p.team] = p.player; });
+  return map;
+}
+
+function getLoggedGameMap() {
+  const map = {};
+  Object.entries(games).forEach(([key, g]) => {
+    if (g.gameId) map[g.gameId] = { key, ...g };
+  });
+  return map;
+}
+
+function findBracketGame(gameId) {
+  return BRACKET_TREE.find(g => g.id === gameId) || null;
+}
+
+function getLoggedWinnerByGameId(gameId) {
+  const logged = Object.values(games).find(g => g.gameId === gameId);
+  if (!logged) return null;
+  return logged.winner || logged.team || null;
+}
+
+function resolveGameTeams(game) {
+  if (!game) return { team1: null, team2: null };
+
+  if (game.round === "Round of 64") {
+    return {
+      team1: game.team1 || null,
+      team2: game.team2 || null
+    };
+  }
+
+  return {
+    team1: getLoggedWinnerByGameId(game.sourceGame1),
+    team2: getLoggedWinnerByGameId(game.sourceGame2)
+  };
+}
+
+function getAvailableGamesForRound(round) {
+  const loggedMap = getLoggedGameMap();
+
+  return BRACKET_TREE
+    .filter(g => g.round === round)
+    .map(g => {
+      const { team1, team2 } = resolveGameTeams(g);
+      return {
+        ...g,
+        team1,
+        team2,
+        alreadyLogged: !!loggedMap[g.id]
+      };
+    })
+    .filter(g => g.team1 && g.team2 && !g.alreadyLogged);
+}
+
+function getSeed(teamName) {
+  return TEAM_DATA[teamName]?.seed ?? null;
+}
+
+function getWinType(winner, loser) {
+  const wSeed = getSeed(winner);
+  const lSeed = getSeed(loser);
+  if (wSeed == null || lSeed == null) return "Favored";
+  return wSeed > lSeed ? "Upset" : "Favored";
+}
+
+function getScores() {
+  const s = {};
+  PLAYERS.forEach(p => s[p] = { fav:0, ups:0, total:0 });
+  Object.values(games).forEach(g => {
+    if (s[g.owner]) {
+      if (g.type === "Favored") { s[g.owner].fav++; s[g.owner].total++; }
+      if (g.type === "Upset")   { s[g.owner].ups++; s[g.owner].total += 2; }
+    }
+  });
+  return s;
+}
+
+function getEliminatedTeams() {
+  const eliminated = new Set();
+  Object.values(games).forEach(g => {
+    if (g.loser) eliminated.add(g.loser);
+    else if (g.round === "Round of 64" && g.team && TEAM_DATA[g.team]?.opponent) {
+      eliminated.add(TEAM_DATA[g.team].opponent);
+    }
+  });
+  return eliminated;
+}
+
+function getTeamsAliveByPlayer() {
+  const eliminated = getEliminatedTeams();
+  const teamOwner = getTeamOwnerMap();
+  const result = {};
+  PLAYERS.forEach(p => result[p] = []);
+
+  Object.entries(teamOwner).forEach(([team, owner]) => {
+    if (!eliminated.has(team)) result[owner].push(team);
+  });
+
+  return result;
+}
+
+function getWinsByTeam() {
+  const wins = {};
+  Object.values(games).forEach(g => {
+    const winner = g.winner || g.team;
+    if (!winner) return;
+    wins[winner] = (wins[winner] || 0) + 1;
+  });
+  return wins;
+}
+
+function getRemainingPossibleWins(teamName) {
+  if (getEliminatedTeams().has(teamName)) return 0;
+  const wins = getWinsByTeam()[teamName] || 0;
+  return Math.max(0, 6 - wins);
+}
+
+function getLeaderboardMeta() {
+  const scores = getScores();
+  const aliveByPlayer = getTeamsAliveByPlayer();
+  const result = {};
+
+  PLAYERS.forEach(player => {
+    const aliveTeams = aliveByPlayer[player] || [];
+    const remainingWins = aliveTeams.reduce((sum, team) => sum + getRemainingPossibleWins(team), 0);
+    const maxPossible = scores[player].total + (remainingWins * 2);
+    result[player] = {
+      alive: aliveTeams.length,
+      maxPossible,
+      eliminated: false
+    };
+  });
+
+  const currentLeaderPoints = Math.max(...PLAYERS.map(p => scores[p].total), 0);
+  PLAYERS.forEach(player => {
+    result[player].eliminated = result[player].maxPossible < currentLeaderPoints;
+  });
+
+  return result;
+}
+
+if (sessionStorage.getItem("mm_admin") === "1") unlockAdmin();
+
+onValue(gamesRef, snap => {
+  games = snap.val() || {};
+  document.getElementById("sync-dot").className = "sync-dot";
+  document.getElementById("sync-status").textContent = "Live · updates automatically";
+
+  if (currentTab === "leaderboard") renderLeaderboard();
+  if (currentTab === "history") renderHistory();
+  if (currentTab === "stats") renderStats();
+  if (currentTab === "log-game") populateMatchupDropdown();
+  renderBracket();
+}, () => {
+  document.getElementById("sync-dot").className = "sync-dot off";
+  document.getElementById("sync-status").textContent = "Connection lost";
+});
+
+onValue(draftOrderRef, snap => {
+  draftOrder = snap.val() || [];
+});
+
+onValue(draftRef, snap => {
+  draftState = snap.val() || {};
+  allPicks = draftState.picks || {};
+  if (currentTab === "draft") renderDraftTab();
+  renderBracket();
+  renderLeaderboard();
+});
+
+function unlockAdmin() {
+  isAdmin = true;
+  sessionStorage.setItem("mm_admin", "1");
+  document.getElementById("tab-log-btn").classList.remove("hidden");
+  document.getElementById("admin-badge").textContent = "ADMIN ✓";
+}
+
+window.showPwModal = () => {
+  if (isAdmin) { switchTab("log-game"); return; }
+  document.getElementById("pw-modal").style.display = "flex";
+  setTimeout(() => document.getElementById("pw-input").focus(), 100);
+};
+
+window.hidePwModal = () => {
+  document.getElementById("pw-modal").style.display = "none";
+  document.getElementById("pw-input").value = "";
+  document.getElementById("pw-error").textContent = "";
+};
+
+window.checkPw = () => {
+  if (document.getElementById("pw-input").value === PASSWORD) {
+    unlockAdmin();
+    hidePwModal();
+    switchTab("log-game");
+  } else {
+    document.getElementById("pw-error").textContent = "Wrong password.";
+    document.getElementById("pw-input").value = "";
+  }
+};
+
+window.logout = () => {
+  isAdmin = false;
+  sessionStorage.removeItem("mm_admin");
+  document.getElementById("tab-log-btn").classList.add("hidden");
+  document.getElementById("admin-badge").textContent = "ADMIN";
+  switchTab("leaderboard");
+};
+
+window.switchTab = (id) => {
+  currentTab = id;
+  const ids = ["leaderboard","history","stats","bracket","draft","log-game"];
+  document.querySelectorAll(".tab").forEach((t,i) => t.classList.toggle("active", ids[i] === id));
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.getElementById("tab-" + id).classList.add("active");
+
+  if (id === "leaderboard") renderLeaderboard();
+  if (id === "history") renderHistory();
+  if (id === "stats") renderStats();
+  if (id === "draft") renderDraftTab();
+  if (id === "log-game") populateMatchupDropdown();
+};
+
+function renderLeaderboard() {
+  const championship = Object.values(games).find(g => g.round === "Championship");
+  const banner = document.getElementById("champion-banner");
+
+  if (championship) {
+    const champTeam = championship.winner || championship.team;
+    const allGames = Object.values(games);
+    const totalUpsets = allGames.filter(g => g.type === "Upset").length;
+    const biggestUpset = allGames
+      .filter(g => g.type === "Upset" && TEAM_DATA[g.winner || g.team])
+      .sort((a,b) => TEAM_DATA[(b.winner || b.team)]?.seed - TEAM_DATA[(a.winner || a.team)]?.seed)[0];
+
+    const scores = getScores();
+    const sorted = PLAYERS.slice().sort((a,b) => scores[b].total - scores[a].total);
+    const poolWinner = sorted[0];
+    const poolWinnerPts = scores[poolWinner].total;
+
+    banner.style.display = "block";
+    banner.innerHTML = `
+      <div style="background:#1A1A2E;border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;color:white;">
+        <div style="font-size:48px;margin-bottom:8px;">🏆</div>
+        <div style="font-size:13px;opacity:0.8;margin-bottom:4px;">2026 Pool Champion</div>
+        <div style="font-size:28px;font-weight:500;margin-bottom:4px;">${poolWinner}</div>
+        <div style="font-size:14px;opacity:0.7;margin-bottom:8px;">${poolWinnerPts} points · $200</div>
+        <div style="font-size:12px;opacity:0.6;margin-bottom:14px;">NCAA Champion: ${champTeam}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
+            <div style="font-size:11px;opacity:0.8;">Total upsets</div>
+            <div style="font-size:20px;font-weight:500;">${totalUpsets}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
+            <div style="font-size:11px;opacity:0.8;">Biggest upset</div>
+            <div style="font-size:13px;font-weight:500;">${biggestUpset ? `(${TEAM_DATA[biggestUpset.winner || biggestUpset.team].seed}) ${biggestUpset.winner || biggestUpset.team}` : "—"}</div>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    banner.style.display = "none";
+  }
+
+  const scores = getScores();
+  const meta = getLeaderboardMeta();
+  const sorted = PLAYERS.slice().sort((a,b) => scores[b].total - scores[a].total);
+  const max = Math.max(1, scores[sorted[0]].total);
+  const medals = ["🥇","🥈","🥉"];
+
+  document.getElementById("lb-list").innerHTML = sorted.map((p,i) => {
+    const s = scores[p];
+    const m = meta[p];
+    const prize = i < 3 && s.total > 0 ? "$" + PRIZES[i] : "";
+    const status = m.eliminated ? "Eliminated" : "Alive";
+
+    return `<div class="lb-row">
+      <div style="width:28px;font-size:15px;text-align:center;">${medals[i] || (i+1)}</div>
+      <div style="flex:1;">
+        <div class="lb-name">${p}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+          <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(s.total/max*100)}%"></div></div>
+          <div style="font-size:10px;color:#aaa;">${s.fav}f · ${s.ups}u · ${m.alive} alive · max ${m.maxPossible}</div>
+        </div>
+        <div style="font-size:10px;color:${m.eliminated ? "#c00" : "#2a7a2a"};margin-top:3px;">${status}</div>
+      </div>
+      <div class="lb-pts">${s.total}</div>
+      <div class="lb-prize">${prize}</div>
+    </div>`;
+  }).join("") || '<div class="empty">No games logged yet</div>';
+}
+
+window.renderHistory = () => {
+  const filter = document.getElementById("filter-round").value;
+  const all = Object.entries(games).sort((a,b) => b[1].ts - a[1].ts);
+  const filtered = filter ? all.filter(([,g]) => g.round === filter) : all;
+
+  document.getElementById("history-list").innerHTML = filtered.length ? filtered.map(([key,g]) => `
+    <div class="log-item">
+      <div class="log-round">${g.round}</div>
+      <div>
+        <div style="font-weight:500;color:#111;">${g.winner || g.team}</div>
+        <div style="color:#888;font-size:11px;">${g.owner || "Not drafted"}</div>
+      </div>
+      <span class="badge badge-${g.type === "Upset" ? "ups" : "fav"}">${g.type}</span>
+      <span class="badge badge-pts">+${g.type === "Upset" ? 2 : 1}pt</span>
+      ${isAdmin ? `<button class="del-btn" onclick="deleteGame('${key}')">×</button>` : ""}
+    </div>
+  `).join("") : '<div class="empty">No games logged yet</div>';
+};
+
+window.deleteGame = async (key) => {
+  await remove(ref(db, "games/" + key));
+};
+
+window.clearAll = async () => {
+  if (confirm("Clear ALL game data?")) {
+    await remove(gamesRef);
+    populateMatchupDropdown();
+  }
+};
+
+function renderStats() {
+  const scores = getScores();
+  const all = Object.values(games);
+  const upsets = all.filter(g => g.type === "Upset").length;
+  const rc = {};
+  all.forEach(g => { rc[g.round] = (rc[g.round] || 0) + 1; });
+
+  document.getElementById("stat-cards").innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total games</div><div class="stat-val">${all.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Total points</div><div class="stat-val">${all.reduce((s,g) => s + (g.type === "Upset" ? 2 : 1), 0)}</div></div>
+    <div class="stat-card"><div class="stat-label">Upsets</div><div class="stat-val">${upsets}</div></div>
+    <div class="stat-card"><div class="stat-label">Upset rate</div><div class="stat-val">${all.length ? Math.round(upsets / all.length * 100) : 0}%</div></div>
+  `;
+
+  document.getElementById("rounds-played").innerHTML = ROUND_ORDER.map(r =>
+    `<span class="round-badge ${rc[r] ? "active-round" : ""}">${r}${rc[r] ? " (" + rc[r] + ")" : ""}</span>`
+  ).join("");
+
+  const sorted = PLAYERS.slice().sort((a,b) => scores[b].total - scores[a].total);
+  const max = Math.max(1, scores[sorted[0]].total);
+
+  document.getElementById("player-bars").innerHTML = sorted.map(p => {
+    const s = scores[p];
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+      <div style="font-size:12px;font-weight:500;min-width:56px;color:#111;">${p}</div>
+      <div style="flex:1;height:8px;background:#eee;border-radius:4px;"><div style="width:${Math.round(s.total/max*100)}%;height:8px;background:#E8650A;border-radius:4px;"></div></div>
+      <div style="font-size:12px;font-weight:500;min-width:20px;text-align:right;color:#111;">${s.total}</div>
+    </div>`;
+  }).join("");
+}
+
+function getSnakePlayer(order, pickNum) {
+  const round = Math.floor(pickNum / 8);
+  const pos = pickNum % 8;
+  return order[round % 2 === 0 ? pos : 7 - pos];
+}
+
+function renderDraftTab() {
+  const sortedPicks = Object.values(allPicks).sort((a,b) => (a.pickNum || 0) - (b.pickNum || 0));
+  const picksCount = sortedPicks.length;
+  const started = draftState.started;
+  const complete = picksCount >= 64;
+  const myIdentity = sessionStorage.getItem("draft_identity");
+
+  document.getElementById("draft-who-view").style.display = "none";
+  document.getElementById("draft-setup-view").style.display = "none";
+  document.getElementById("draft-not-started-view").style.display = "none";
+  document.getElementById("draft-active-view").style.display = "none";
+  document.getElementById("draft-complete-view").style.display = "none";
+  document.getElementById("draft-admin-controls").style.display = "none";
+
+  if (complete) {
+    document.getElementById("draft-complete-view").style.display = "block";
+    if (isAdmin) document.getElementById("draft-reset-btn").style.display = "block";
+    renderFinalResults();
+    renderBracket();
+    return;
+  }
+
+  if (!started) {
+    if (isAdmin) {
+      document.getElementById("draft-setup-view").style.display = "block";
+      buildDraftOrderInputs();
+    } else {
+      document.getElementById("draft-not-started-view").style.display = "block";
+    }
+    return;
+  }
+
+  if (!myIdentity && !isAdmin) {
+    document.getElementById("draft-who-view").style.display = "block";
+    document.getElementById("draft-who-list").innerHTML = PLAYERS.map(p =>
+      `<button onclick="setDraftIdentity('${p}')" style="padding:10px;border-radius:8px;border:0.5px solid #ddd;background:#fff;font-size:14px;font-weight:500;color:#111;cursor:pointer;width:100%;">${p}</button>`
+    ).join("");
+    return;
+  }
+
+  document.getElementById("draft-active-view").style.display = "block";
+  if (isAdmin) document.getElementById("draft-admin-controls").style.display = "block";
+
+  const currentPlayer = getSnakePlayer(draftOrder, picksCount);
+  const round = Math.floor(picksCount / 8) + 1;
+  document.getElementById("draft-round-label").textContent = `Round ${round} · Pick ${picksCount + 1} of 64`;
+  document.getElementById("draft-current-player").textContent = currentPlayer;
+
+  const draftedTeams = new Set(sortedPicks.map(p => p.team));
+  const isMyTurn = isAdmin || myIdentity === currentPlayer;
+
+  if (isMyTurn) {
+    document.getElementById("draft-turn-label").textContent = "it's your pick!";
+    document.getElementById("draft-my-turn-view").style.display = "block";
+    document.getElementById("draft-waiting-view").style.display = "none";
+
+    const q = (document.getElementById("draft-search").value || "").toLowerCase();
+    const regionColors = { East:"#378ADD", South:"#1D9E75", West:"#D85A30", Midwest:"#7F77DD" };
+
+    document.getElementById("draft-teams-list").innerHTML = Object.entries(ALL_TEAMS_BY_REGION).map(([region, teams]) => {
+      const available = teams.filter(t => !draftedTeams.has(t.name));
+      if (!available.length) return "";
+
+      const filtered = available.filter(t => t.name.toLowerCase().includes(q));
+      if (!filtered.length) return "";
+
+      return `<div style="margin-bottom:12px;">
+        <div style="font-size:11px;font-weight:500;color:#fff;background:${regionColors[region]};padding:4px 10px;border-radius:6px;margin-bottom:6px;">${region}</div>
+        ${filtered.map(t => `
+          <div class="draft-team-btn" data-name="${t.name}" onclick="makePick(this.dataset.name)">
+            <span style="font-size:11px;color:#aaa;min-width:20px;">${t.seed}</span>
+            <span style="flex:1;">${t.name}</span>
+            <span style="font-size:11px;color:#E8650A;font-weight:600;">Draft ›</span>
+          </div>
+        `).join("")}
+      </div>`;
+    }).join("");
+  } else {
+    document.getElementById("draft-turn-label").textContent = "on the clock";
+    document.getElementById("draft-my-turn-view").style.display = "none";
+    document.getElementById("draft-waiting-view").style.display = "block";
+    document.getElementById("draft-waiting-view").textContent = `Waiting for ${currentPlayer} to pick...`;
+  }
+
+  const recent = sortedPicks.slice(-5).reverse();
+  document.getElementById("draft-picks-log").innerHTML = recent.length ? recent.map(p => `
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:#fff;border:0.5px solid #e0e0e0;border-radius:8px;margin-bottom:4px;font-size:12px;">
+      <span style="font-weight:500;color:#111;flex:1;">${p.team}</span>
+      <span style="color:#888;">${p.player}</span>
+    </div>
+  `).join("") : '<div class="empty" style="padding:12px;">No picks yet</div>';
+}
+
+function buildDraftOrderInputs() {
+  const mockOrder = { Mitch:1, Blaine:2, Carson:3, Guy:4, Josh:5, Shane:6, Sutton:7, Kent:8 };
+  document.getElementById("draft-order-inputs").innerHTML = PLAYERS.map((p,i) => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="font-size:13px;min-width:60px;color:#111;">${p}</div>
+      <select id="draft-pos-${i}" style="flex:1;">
+        <option value="">Pick #...</option>
+        ${[1,2,3,4,5,6,7,8].map(n => `<option value="${n}" ${mockOrder[p] === n ? "selected" : ""}>${n}</option>`).join("")}
+      </select>
+    </div>
+  `).join("");
+}
+
+window.saveDraftOrder = async () => {
+  const msg = document.getElementById("draft-setup-msg");
+  const order = new Array(8);
+  const used = new Set();
+  let valid = true;
+
+  PLAYERS.forEach((p,i) => {
+    const val = document.getElementById(`draft-pos-${i}`)?.value;
+    if (!val || used.has(val)) { valid = false; return; }
+    used.add(val);
+    order[parseInt(val) - 1] = p;
+  });
+
+  if (!valid || order.some(x => !x)) {
+    msg.textContent = "Assign each player a unique position.";
+    return;
+  }
+
+  msg.textContent = "";
+  await set(draftOrderRef, order);
+  await set(draftRef, { started:true, picks:{} });
+};
+
+window.setDraftIdentity = (name) => {
+  sessionStorage.setItem("draft_identity", name);
+  renderDraftTab();
+};
+
+window.filterTeams = () => renderDraftTab();
+
+window.makePick = async (team) => {
+  const picksCount = Object.keys(allPicks).length;
+  if (picksCount >= 64) return;
+
+  const currentPlayer = getSnakePlayer(draftOrder, picksCount);
+  const myIdentity = sessionStorage.getItem("draft_identity");
+  if (!isAdmin && myIdentity !== currentPlayer) return;
+
+  await push(ref(db, "draft/picks"), {
+    player: currentPlayer,
+    team,
+    pickNum: picksCount,
+    ts: Date.now()
+  });
+};
+
+window.resetDraft = async () => {
+  if (!confirm("Reset the entire draft? All picks will be lost.")) return;
+  await remove(draftRef);
+  await remove(draftOrderRef);
+};
+
+window.populateMatchupDropdown = () => {
+  const roundSel = document.getElementById("inp-round");
+  const matchupSel = document.getElementById("inp-matchup");
+  const winnerSel = document.getElementById("inp-winner");
+  const ownerSel = document.getElementById("inp-owner");
+  const preview = document.getElementById("game-preview");
+
+  if (!roundSel || !matchupSel) return;
+
+  if (!roundSel.value) {
+    for (const round of ROUND_ORDER) {
+      const logged = Object.values(games).filter(g => g.round === round).length;
+      if (logged < ROUND_WIN_COUNTS[round]) {
+        roundSel.value = round;
+        break;
+      }
+    }
+  }
+
+  const round = roundSel.value;
+  const availableGames = getAvailableGamesForRound(round);
+
+  matchupSel.innerHTML = '<option value="">Select matchup...</option>' +
+    availableGames.map(g => {
+      const s1 = getSeed(g.team1);
+      const s2 = getSeed(g.team2);
+      return `<option value="${g.id}">(${s1}) ${g.team1} vs (${s2}) ${g.team2}</option>`;
+    }).join("");
+
+  winnerSel.innerHTML = '<option value="">Select winner...</option>';
+  ownerSel.innerHTML = '<option value="">Auto-filled...</option>';
+  preview.textContent = availableGames.length ? "Select a matchup and winner..." : "No matchups available yet for this round.";
+};
+
+window.populateWinnerDropdown = () => {
+  const matchupId = document.getElementById("inp-matchup").value;
+  const winnerSel = document.getElementById("inp-winner");
+  const ownerSel = document.getElementById("inp-owner");
+  const preview = document.getElementById("game-preview");
+
+  winnerSel.innerHTML = '<option value="">Select winner...</option>';
+  ownerSel.innerHTML = '<option value="">Auto-filled...</option>';
+  preview.textContent = "Select winner...";
+
+  if (!matchupId) return;
+
+  const game = findBracketGame(matchupId);
+  const { team1, team2 } = resolveGameTeams(game);
+  if (!team1 || !team2) return;
+
+  const s1 = getSeed(team1);
+  const s2 = getSeed(team2);
+
+  winnerSel.innerHTML = `
+    <option value="">Select winner...</option>
+    <option value="${team1}">(${s1}) ${team1}</option>
+    <option value="${team2}">(${s2}) ${team2}</option>
+  `;
+};
+
+window.previewGameMeta = () => {
+  const matchupId = document.getElementById("inp-matchup").value;
+  const winner = document.getElementById("inp-winner").value;
+  const ownerSel = document.getElementById("inp-owner");
+  const preview = document.getElementById("game-preview");
+
+  ownerSel.innerHTML = '<option value="">Auto-filled...</option>';
+
+  if (!matchupId || !winner) {
+    preview.textContent = "Select a matchup and winner...";
+    return;
+  }
+
+  const game = findBracketGame(matchupId);
+  const { team1, team2 } = resolveGameTeams(game);
+  const loser = winner === team1 ? team2 : team1;
+  const type = getWinType(winner, loser);
+  const teamOwner = getTeamOwnerMap();
+  const owner = teamOwner[winner] || "";
+
+  ownerSel.innerHTML = owner
+    ? `<option value="${owner}">${owner}</option>`
+    : `<option value="">Not drafted</option>`;
+
+  preview.textContent = `${winner} over ${loser} · ${type} · ${type === "Upset" ? "+2 pts" : "+1 pt"}`;
+};
+
+window.logGame = async () => {
+  const round = document.getElementById("inp-round").value;
+  const matchupId = document.getElementById("inp-matchup").value;
+  const winner = document.getElementById("inp-winner").value;
+  const owner = document.getElementById("inp-owner").value;
+  const msg = document.getElementById("form-msg");
+
+  if (!round || !matchupId || !winner) {
+    msg.className = "";
+    msg.textContent = "Fill in all fields.";
+    return;
+  }
+
+  const game = findBracketGame(matchupId);
+  const { team1, team2 } = resolveGameTeams(game);
+
+  if (!team1 || !team2) {
+    msg.className = "";
+    msg.textContent = "That matchup is not ready yet.";
+    return;
+  }
+
+  const loser = winner === team1 ? team2 : team1;
+  if (!loser) {
+    msg.className = "";
+    msg.textContent = "Could not determine losing team.";
+    return;
+  }
+
+  const type = getWinType(winner, loser);
+  const pts = type === "Upset" ? 2 : 1;
+
+  await push(gamesRef, {
+    gameId: matchupId,
+    round,
+    winner,
+    loser,
+    owner,
+    type,
+    team: winner,
+    ts: Date.now()
+  });
+
+  document.getElementById("inp-matchup").value = "";
+  document.getElementById("inp-winner").innerHTML = '<option value="">Select winner...</option>';
+  document.getElementById("inp-owner").innerHTML = '<option value="">Auto-filled...</option>';
+  document.getElementById("game-preview").textContent = "Select a matchup and winner...";
+
+  populateMatchupDropdown();
+
+  msg.className = "ok";
+  msg.textContent = `Added: ${winner} over ${loser} (${type}, +${pts} pt${pts > 1 ? "s" : ""})`;
+  setTimeout(() => { msg.textContent = ""; }, 3000);
+};
+
+function renderBracket() {
+  const teamOwner = getTeamOwnerMap();
+  const eliminated = getEliminatedTeams();
+  const regionColors = { East:"#378ADD", South:"#1D9E75", West:"#D85A30", Midwest:"#7F77DD" };
   const playinTeams = new Set(["Lehigh/Prairie View","Texas/NC State","UMBC/Howard","Miami OH/SMU"]);
 
   document.getElementById("bracket-content").innerHTML = Object.entries(ALL_TEAMS_BY_REGION).map(([region, teams]) => {
-    const matchups = [];
-    for(let i = 0; i < teams.length; i += 2) {
-      matchups.push([teams[i], teams[i+1]]);
-    }
+    const matchups = SEED_MATCHUPS.map(([seed1, seed2]) => {
+      const t1 = teams.find(t => t.seed === seed1);
+      const t2 = teams.find(t => t.seed === seed2);
+      return [t1, t2];
+    });
+
     return `
-      <div class="sec-title" style="border-left:3px solid ${regionColors[region]};padding-left:8px;${region!=="East"?"margin-top:14px;":""}">${region}</div>
+      <div class="sec-title" style="border-left:3px solid ${regionColors[region]};padding-left:8px;${region !== "East" ? "margin-top:14px;" : ""}">${region}</div>
       ${matchups.map(([t1, t2]) => {
         const owner1 = teamOwner[t1.name];
         const owner2 = teamOwner[t2.name];
@@ -914,6 +1221,7 @@ function renderBracket() {
         const playin2 = playinTeams.has(t2.name) ? " bk-playin" : "";
         const elim1 = eliminated.has(t1.name) ? "opacity:0.35;text-decoration:line-through;" : "";
         const elim2 = eliminated.has(t2.name) ? "opacity:0.35;text-decoration:line-through;" : "";
+
         return `<div class="bk-match">
           <div class="bk-team${playin1}" style="${elim1}">
             <span class="bk-seed">${t1.seed}</span>
@@ -926,20 +1234,24 @@ function renderBracket() {
             ${c2 ? `<span class="bk-own" style="background:${c2.bg};color:${c2.color};padding:1px 6px;border-radius:99px;font-style:normal;font-weight:500;">${owner2}</span>` : `<span class="bk-own">TBD</span>`}
           </div>
         </div>`;
-      }).join("")}`;
+      }).join("")}
+    `;
   }).join("");
 }
 
-
 function renderFinalResults() {
   const byPlayer = {};
-  PLAYERS.forEach(p => byPlayer[p]=[]);
-  Object.values(allPicks).sort((a,b)=>(a.pickNum||0)-(b.pickNum||0)).forEach(p=>{ if(byPlayer[p.player]) byPlayer[p.player].push(p.team); });
-  document.getElementById("draft-final-results").innerHTML = PLAYERS.map(p=>`
+  PLAYERS.forEach(p => byPlayer[p] = []);
+  Object.values(allPicks).sort((a,b) => (a.pickNum || 0) - (b.pickNum || 0)).forEach(p => {
+    if (byPlayer[p.player]) byPlayer[p.player].push(p.team);
+  });
+
+  document.getElementById("draft-final-results").innerHTML = PLAYERS.map(p => `
     <div style="background:#fff;border:0.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
       <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px;">${p}</div>
-      <div style="font-size:12px;color:#555;">${(byPlayer[p]||[]).join(", ")||"No picks"}</div>
-    </div>`).join("");
+      <div style="font-size:12px;color:#555;">${(byPlayer[p] || []).join(", ") || "No picks"}</div>
+    </div>
+  `).join("");
 }
 </script>
 </body>
