@@ -572,10 +572,11 @@ window.autoFillOwnerAndType = () => {
   const round = document.getElementById("inp-round").value;
 
   // Auto-detect favored or upset for Round of 64 only
+  // For later rounds, only auto-select if nothing is chosen yet
   const data = TEAM_DATA[team];
   if(data && round === "Round of 64") {
     window.selectType(data.seed > data.opponentSeed ? "Upset" : "Favored");
-  } else {
+  } else if(!selectedType) {
     window.selectType("");
   }
 
