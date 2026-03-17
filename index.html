@@ -322,6 +322,7 @@ onValue(draftRef, snap => {
   allPicks = draftState.picks || {};
   if(currentTab === "draft") renderDraftTab();
   renderBracket();
+  renderLeaderboard();
 });
 
 function unlockAdmin() {
