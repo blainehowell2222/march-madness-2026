@@ -245,6 +245,23 @@ select:focus, input:focus { border-color: #E8650A; }
           </div>
         </div>
 
+        <!-- shown only when both teams share the same seed (e.g. two 1-seeds in FF/Championship) -->
+        <div id="tie-seed-row" class="form-row" style="display:none;">
+          <div class="form-group">
+            <label>Result type <span style="color:#E8650A;">· equal seeds — pick manually</span></label>
+            <div style="display:flex;gap:8px;">
+              <label style="flex:1;display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:8px;border:0.5px solid #ccc;cursor:pointer;font-size:13px;font-weight:500;color:#185FA5;background:#E6F1FB;" id="tie-fav-label">
+                <input type="radio" name="tie-type" id="tie-fav" value="Favored" onchange="previewGameMeta()" style="width:auto;accent-color:#185FA5;" />
+                Favored (+1)
+              </label>
+              <label style="flex:1;display:flex;align-items:center;gap:6px;padding:9px 12px;border-radius:8px;border:0.5px solid #ccc;cursor:pointer;font-size:13px;font-weight:500;color:#854F0B;background:#FAEEDA;" id="tie-ups-label">
+                <input type="radio" name="tie-type" id="tie-ups" value="Upset" onchange="previewGameMeta()" style="width:auto;accent-color:#854F0B;" />
+                Upset (+2)
+              </label>
+            </div>
+          </div>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label>Auto result</label>
@@ -290,7 +307,7 @@ const draftOrderRef = ref(db, "draftOrder");
 
 const PLAYERS = ["Mitch","Blaine","Josh","Kent","Guy","Carson","Sutton","Shane"];
 const PRIZES = [200, 125, 75];
-const PASSWORD = "ChangeMe123!";
+const PASSWORD = "12Cowboys";
 
 const ROUND_ORDER = [
   "Round of 64",
@@ -612,9 +629,6 @@ function getEliminatedTeams() {
   const eliminated = new Set();
   Object.values(games).forEach(g => {
     if (g.loser) eliminated.add(g.loser);
-    else if (g.round === "Round of 64" && g.team && TEAM_DATA[g.team]?.opponent) {
-      eliminated.add(TEAM_DATA[g.team].opponent);
-    }
   });
   return eliminated;
 }
@@ -1385,6 +1399,8 @@ window.populateMatchupDropdown = () => {
   winnerSel.innerHTML = '<option value="">Select winner...</option>';
   ownerSel.innerHTML = '<option value="">Auto-filled...</option>';
   preview.textContent = availableGames.length ? "Select a matchup and winner..." : "No matchups available yet for this round.";
+  document.getElementById("tie-seed-row").style.display = "none";
+  document.querySelectorAll("input[name='tie-type']").forEach(r => r.checked = false);
 };
 
 window.populateWinnerDropdown = () => {
@@ -1396,6 +1412,8 @@ window.populateWinnerDropdown = () => {
   winnerSel.innerHTML = '<option value="">Select winner...</option>';
   ownerSel.innerHTML = '<option value="">Auto-filled...</option>';
   preview.textContent = "Select a matchup and winner...";
+  document.getElementById("tie-seed-row").style.display = "none";
+  document.querySelectorAll("input[name='tie-type']").forEach(r => r.checked = false);
 
   if (!matchupId) return;
 
@@ -1418,18 +1436,35 @@ window.previewGameMeta = () => {
   const winner = document.getElementById("inp-winner").value;
   const ownerSel = document.getElementById("inp-owner");
   const preview = document.getElementById("game-preview");
+  const tieSeedRow = document.getElementById("tie-seed-row");
 
   ownerSel.innerHTML = '<option value="">Auto-filled...</option>';
 
   if (!matchupId || !winner) {
     preview.textContent = "Select a matchup and winner...";
+    tieSeedRow.style.display = "none";
     return;
   }
 
   const game = findBracketGame(matchupId);
   const { team1, team2 } = resolveGameTeams(game);
   const loser = winner === team1 ? team2 : team1;
-  const type = getWinType(winner, loser);
+  const wSeed = getSeed(winner);
+  const lSeed = getSeed(loser);
+  const tiedSeeds = wSeed != null && lSeed != null && wSeed === lSeed;
+
+  // Show or hide the manual toggle
+  tieSeedRow.style.display = tiedSeeds ? "flex" : "none";
+
+  // Determine type: manual if tied seeds, auto otherwise
+  let type;
+  if (tiedSeeds) {
+    const checked = document.querySelector("input[name='tie-type']:checked");
+    type = checked ? checked.value : null;
+  } else {
+    type = getWinType(winner, loser);
+  }
+
   const teamOwner = getTeamOwnerMap();
   const owner = teamOwner[winner] || "";
 
@@ -1437,7 +1472,11 @@ window.previewGameMeta = () => {
     ? `<option value="${owner}">${owner}</option>`
     : `<option value="">Not drafted</option>`;
 
-  preview.textContent = `${winner} over ${loser} · ${type} · ${type === "Upset" ? "+2 pts" : "+1 pt"}`;
+  if (tiedSeeds && !type) {
+    preview.innerHTML = `<span style="color:#854F0B;">⚠ Same seed — select Favored or Upset above</span>`;
+  } else {
+    preview.textContent = `${winner} over ${loser} · ${type} · ${type === "Upset" ? "+2 pts" : "+1 pt"}`;
+  }
 };
 
 window.logGame = async () => {
@@ -1477,7 +1516,22 @@ window.logGame = async () => {
   }
 
   const loser = winner === team1 ? team2 : team1;
-  const type = getWinType(winner, loser);
+  const wSeed = getSeed(winner);
+  const lSeed = getSeed(loser);
+  const tiedSeeds = wSeed != null && lSeed != null && wSeed === lSeed;
+
+  let type;
+  if (tiedSeeds) {
+    const checked = document.querySelector("input[name='tie-type']:checked");
+    if (!checked) {
+      msg.className = "";
+      msg.textContent = "Same seed — please select Favored or Upset.";
+      return;
+    }
+    type = checked.value;
+  } else {
+    type = getWinType(winner, loser);
+  }
   const pts = type === "Upset" ? 2 : 1;
 
   await push(gamesRef, {
@@ -1495,6 +1549,8 @@ window.logGame = async () => {
   document.getElementById("inp-winner").innerHTML = '<option value="">Select winner...</option>';
   document.getElementById("inp-owner").innerHTML = '<option value="">Auto-filled...</option>';
   document.getElementById("game-preview").textContent = "Select a matchup and winner...";
+  document.getElementById("tie-seed-row").style.display = "none";
+  document.querySelectorAll("input[name='tie-type']").forEach(r => r.checked = false);
 
   populateMatchupDropdown();
 
