@@ -490,20 +490,28 @@ function populateTeamDropdown() {
   const alreadyWonThisRound = new Set(
     Object.values(games).filter(g => g.round === selectedRound).map(g => g.team)
   );
-  // Opponents of winners in this round (losers)
+  // Opponents of winners in this round (losers) - only applies to Round of 64 where we know matchups
   const alreadyLostThisRound = new Set();
-  Object.values(games).filter(g => g.round === selectedRound).forEach(g => {
-    const data = TEAM_DATA[g.team];
-    if(data && data.opponent) alreadyLostThisRound.add(data.opponent);
-  });
+  if(selectedRound === "Round of 64") {
+    Object.values(games).filter(g => g.round === selectedRound).forEach(g => {
+      const data = TEAM_DATA[g.team];
+      if(data && data.opponent) alreadyLostThisRound.add(data.opponent);
+    });
+  }
 
   sel.innerHTML = '<option value="">Select team...</option>';
 
   if(!selectedRound) return;
 
   if(selectedRound === "Round of 64") {
-    // Use hardcoded TEAM_DATA organized by region
-    const alreadyPlayed = new Set([...alreadyWonThisRound, ...alreadyLostThisRound]);
+    // Build complete set of teams that have already played
+    const alreadyPlayed = new Set();
+    Object.values(games).filter(g => g.round === "Round of 64").forEach(g => {
+      alreadyPlayed.add(g.team); // winner
+      const data = TEAM_DATA[g.team];
+      if(data && data.opponent) alreadyPlayed.add(data.opponent); // loser
+    });
+
     const regions = ["East","South","West","Midwest"];
     regions.forEach(region => {
       const available = Object.entries(TEAM_DATA)
