@@ -628,13 +628,13 @@ window.logGame = async () => {
   if(!round||!owner||!team||!selectedType) { msg.className=""; msg.textContent="Fill in all fields."; return; }
   if(round !== "Round of 64" && !loser) { msg.className=""; msg.textContent="Please select the losing team."; return; }
   await push(gamesRef, {round, owner, team, loser, type:selectedType, ts:Date.now()});
+  const pts = selectedType==="Upset" ? 2 : 1;
   document.getElementById("inp-team").value = "";
   document.getElementById("inp-owner").innerHTML = '<option value="">Auto-filled...</option>';
   if(document.getElementById("inp-loser")) document.getElementById("inp-loser").value = "";
   document.getElementById("loser-group").style.display = "none";
   window.selectType("");
   populateTeamDropdown();
-  const pts = selectedType==="Upset"?2:1;
   msg.className="ok"; msg.textContent=`Added: ${team} (+${pts}pt for ${owner})`;
   setTimeout(()=>{ msg.textContent=""; },3000);
 };
