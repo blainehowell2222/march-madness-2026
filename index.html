@@ -352,8 +352,6 @@ const ALL_TEAMS_BY_REGION = {
   ]
 };
 
-const ALL_TEAMS = Object.values(ALL_TEAMS_BY_REGION).flat().map(t => t.name);
-
 const TEAM_DATA = {
   "Duke":{seed:1,region:"East",opponent:"Siena",opponentSeed:16},
   "Siena":{seed:16,region:"East",opponent:"Duke",opponentSeed:1},
@@ -421,7 +419,7 @@ const TEAM_DATA = {
   "Kentucky":{seed:7,region:"Midwest",opponent:"Santa Clara",opponentSeed:10},
   "Santa Clara":{seed:10,region:"Midwest",opponent:"Kentucky",opponentSeed:7},
   "Iowa State":{seed:2,region:"Midwest",opponent:"Tennessee State",opponentSeed:15},
-  "Tennessee State":{seed:15,region:"Midwest",opponent:"Iowa State",opponentSeed:2},
+  "Tennessee State":{seed:15,region:"Midwest",opponent:"Iowa State",opponentSeed:2}
 };
 
 const PLAYER_COLORS = {
@@ -432,7 +430,7 @@ const PLAYER_COLORS = {
   Guy:     {bg:"#FAECE7", color:"#712B13"},
   Carson:  {bg:"#FBEAF0", color:"#72243E"},
   Sutton:  {bg:"#FAEEDA", color:"#854F0B"},
-  Shane:   {bg:"#EAF3DE", color:"#27500A"},
+  Shane:   {bg:"#EAF3DE", color:"#27500A"}
 };
 
 let games = {};
@@ -493,7 +491,7 @@ function buildBracketTree() {
       round: "Elite 8",
       region,
       sourceGame1: `${region}-S16-1`,
-      sourceGame2: `${region}-S16-2}`,
+      sourceGame2: `${region}-S16-2`,
       nextGameId:
         region === "East" ? "FF-1" :
         region === "West" ? "FF-1" :
@@ -528,14 +526,7 @@ function buildBracketTree() {
   return tree;
 }
 
-// fix typo in one sourceGame2 string if needed by rebuilding cleanly:
-const BRACKET_TREE = (() => {
-  const raw = buildBracketTree();
-  return raw.map(g => ({
-    ...g,
-    sourceGame2: g.sourceGame2 === `${g.region}-S16-2}` ? `${g.region}-S16-2` : g.sourceGame2
-  }));
-})();
+const BRACKET_TREE = buildBracketTree();
 
 function getTeamOwnerMap() {
   const map = {};
@@ -641,20 +632,135 @@ function getTeamsAliveByPlayer() {
   return result;
 }
 
-function getWinsByTeam() {
-  const wins = {};
-  Object.values(games).forEach(g => {
-    const winner = g.winner || g.team;
-    if (!winner) return;
-    wins[winner] = (wins[winner] || 0) + 1;
-  });
-  return wins;
+function getRoundGames(round, region = null) {
+  return BRACKET_TREE.filter(g => g.round === round && (region ? g.region === region : true));
 }
 
-function getRemainingPossibleWins(teamName) {
-  if (getEliminatedTeams().has(teamName)) return 0;
-  const wins = getWinsByTeam()[teamName] || 0;
-  return Math.max(0, 6 - wins);
+function getGameDisplay(game) {
+  const { team1, team2 } = resolveGameTeams(game);
+  const winner = getLoggedWinnerByGameId(game.id);
+  return { team1, team2, winner };
+}
+
+function getPossibleWinnersFromGame(gameId) {
+  const loggedWinner = getLoggedWinnerByGameId(gameId);
+  if (loggedWinner) return [loggedWinner];
+
+  const game = findBracketGame(gameId);
+  if (!game) return [];
+
+  if (game.round === "Round of 64") {
+    return [game.team1, game.team2].filter(Boolean);
+  }
+
+  const left = getPossibleWinnersFromGame(game.sourceGame1);
+  const right = getPossibleWinnersFromGame(game.sourceGame2);
+  return [...new Set([...left, ...right])];
+}
+
+function addCandidate(map, key, points) {
+  if (!Object.prototype.hasOwnProperty.call(map, key) || points > map[key]) {
+    map[key] = points;
+  }
+}
+
+function getBestPointsForWinnerAgainstCandidates(winner, opponentCandidates) {
+  if (!winner || !opponentCandidates.length) return 0;
+  let best = 0;
+  opponentCandidates.forEach(opp => {
+    const pts = getWinType(winner, opp) === "Upset" ? 2 : 1;
+    if (pts > best) best = pts;
+  });
+  return best;
+}
+
+function evaluatePlayerCandidatesForGame(gameId, ownedSet, memo = {}) {
+  const memoKey = `${gameId}|${[...ownedSet].sort().join(",")}`;
+  if (memo[memoKey]) return memo[memoKey];
+
+  const NONE = "__NONE__";
+  const game = findBracketGame(gameId);
+  const loggedWinner = getLoggedWinnerByGameId(gameId);
+
+  if (!game) {
+    return { [NONE]: 0 };
+  }
+
+  if (loggedWinner) {
+    const out = {};
+    if (ownedSet.has(loggedWinner)) addCandidate(out, loggedWinner, 0);
+    else addCandidate(out, NONE, 0);
+    memo[memoKey] = out;
+    return out;
+  }
+
+  if (game.round === "Round of 64") {
+    const out = {};
+    const teams = [game.team1, game.team2].filter(Boolean);
+    const ownedTeams = teams.filter(t => ownedSet.has(t));
+
+    addCandidate(out, NONE, 0);
+
+    ownedTeams.forEach(team => {
+      const opp = teams.find(t => t !== team);
+      const pts = getWinType(team, opp) === "Upset" ? 2 : 1;
+      addCandidate(out, team, pts);
+    });
+
+    memo[memoKey] = out;
+    return out;
+  }
+
+  const leftMap = evaluatePlayerCandidatesForGame(game.sourceGame1, ownedSet, memo);
+  const rightMap = evaluatePlayerCandidatesForGame(game.sourceGame2, ownedSet, memo);
+  const out = {};
+
+  Object.entries(leftMap).forEach(([leftWinner, leftPts]) => {
+    Object.entries(rightMap).forEach(([rightWinner, rightPts]) => {
+      const basePts = leftPts + rightPts;
+
+      if (leftWinner === NONE && rightWinner === NONE) {
+        addCandidate(out, NONE, basePts);
+        return;
+      }
+
+      if (leftWinner !== NONE && rightWinner === NONE) {
+        addCandidate(out, NONE, basePts);
+        const rightOpps = getPossibleWinnersFromGame(game.sourceGame2);
+        const currentPts = getBestPointsForWinnerAgainstCandidates(leftWinner, rightOpps);
+        addCandidate(out, leftWinner, basePts + currentPts);
+        return;
+      }
+
+      if (leftWinner === NONE && rightWinner !== NONE) {
+        addCandidate(out, NONE, basePts);
+        const leftOpps = getPossibleWinnersFromGame(game.sourceGame1);
+        const currentPts = getBestPointsForWinnerAgainstCandidates(rightWinner, leftOpps);
+        addCandidate(out, rightWinner, basePts + currentPts);
+        return;
+      }
+
+      const leftBeatsRightPts = getWinType(leftWinner, rightWinner) === "Upset" ? 2 : 1;
+      const rightBeatsLeftPts = getWinType(rightWinner, leftWinner) === "Upset" ? 2 : 1;
+
+      addCandidate(out, leftWinner, basePts + leftBeatsRightPts);
+      addCandidate(out, rightWinner, basePts + rightBeatsLeftPts);
+    });
+  });
+
+  if (!Object.keys(out).length) addCandidate(out, NONE, 0);
+
+  memo[memoKey] = out;
+  return out;
+}
+
+function getPlayerFutureMax(player) {
+  const aliveByPlayer = getTeamsAliveByPlayer();
+  const ownedAlive = new Set(aliveByPlayer[player] || []);
+  if (!ownedAlive.size) return 0;
+
+  const resultMap = evaluatePlayerCandidatesForGame("CHAMP-1", ownedAlive, {});
+  return Math.max(...Object.values(resultMap), 0);
 }
 
 function getLeaderboardMeta() {
@@ -664,8 +770,9 @@ function getLeaderboardMeta() {
 
   PLAYERS.forEach(player => {
     const aliveTeams = aliveByPlayer[player] || [];
-    const remainingWins = aliveTeams.reduce((sum, team) => sum + getRemainingPossibleWins(team), 0);
-    const maxPossible = scores[player].total + (remainingWins * 2);
+    const futurePoints = getPlayerFutureMax(player);
+    const maxPossible = scores[player].total + futurePoints;
+
     result[player] = {
       alive: aliveTeams.length,
       maxPossible,
@@ -674,11 +781,18 @@ function getLeaderboardMeta() {
   });
 
   const currentLeaderPoints = Math.max(...PLAYERS.map(p => scores[p].total), 0);
+
   PLAYERS.forEach(player => {
     result[player].eliminated = result[player].maxPossible < currentLeaderPoints;
   });
 
   return result;
+}
+
+function getSnakePlayer(order, pickNum) {
+  const round = Math.floor(pickNum / 8);
+  const pos = pickNum % 8;
+  return order[round % 2 === 0 ? pos : 7 - pos];
 }
 
 if (sessionStorage.getItem("mm_admin") === "1") unlockAdmin();
@@ -700,6 +814,7 @@ onValue(gamesRef, snap => {
 
 onValue(draftOrderRef, snap => {
   draftOrder = snap.val() || [];
+  if (currentTab === "draft") renderDraftTab();
 });
 
 onValue(draftRef, snap => {
@@ -832,7 +947,7 @@ function renderLeaderboard() {
 
 window.renderHistory = () => {
   const filter = document.getElementById("filter-round").value;
-  const all = Object.entries(games).sort((a,b) => b[1].ts - a[1].ts);
+  const all = Object.entries(games).sort((a,b) => (b[1].ts || 0) - (a[1].ts || 0));
   const filtered = filter ? all.filter(([,g]) => g.round === filter) : all;
 
   document.getElementById("history-list").innerHTML = filtered.length ? filtered.map(([key,g]) => `
@@ -891,10 +1006,166 @@ function renderStats() {
   }).join("");
 }
 
-function getSnakePlayer(order, pickNum) {
-  const round = Math.floor(pickNum / 8);
-  const pos = pickNum % 8;
-  return order[round % 2 === 0 ? pos : 7 - pos];
+function renderBracketGameCard(game, compact = false) {
+  const { team1, team2, winner } = getGameDisplay(game);
+  const teamOwner = getTeamOwnerMap();
+
+  const teamRow = (team) => {
+    const owner = teamOwner[team];
+    const colors = owner ? PLAYER_COLORS[owner] : null;
+    const isWinner = winner === team;
+
+    return `
+      <div style="
+        display:flex;
+        align-items:center;
+        gap:8px;
+        padding:${compact ? "6px 8px" : "8px 10px"};
+        border-bottom:0.5px solid #f0f0f0;
+        background:${isWinner ? "#FFF3EC" : "#fff"};
+        ${isWinner ? "font-weight:600;" : ""}
+      ">
+        <span style="flex:1;font-size:${compact ? "12px" : "13px"};color:#111;">
+          ${team || "TBD"}
+        </span>
+        ${
+          owner
+            ? `<span style="font-size:10px;background:${colors.bg};color:${colors.color};padding:2px 6px;border-radius:99px;font-weight:500;">${owner}</span>`
+            : ""
+        }
+      </div>
+    `;
+  };
+
+  return `
+    <div style="background:#fff;border:0.5px solid #e0e0e0;border-radius:8px;overflow:hidden;margin-bottom:6px;">
+      ${teamRow(team1)}
+      ${teamRow(team2)}
+      <div style="padding:5px 8px;font-size:10px;color:#888;background:#fafafa;">
+        ${game.round}${game.region ? ` · ${game.region}` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function renderBracket() {
+  const teamOwner = getTeamOwnerMap();
+  const eliminated = getEliminatedTeams();
+  const regionColors = { East:"#378ADD", South:"#1D9E75", West:"#D85A30", Midwest:"#7F77DD" };
+  const playinTeams = new Set(["Lehigh/Prairie View","Texas/NC State","UMBC/Howard","Miami OH/SMU"]);
+
+  const initialRegionBlock = ([region, teams]) => {
+    const matchups = SEED_MATCHUPS.map(([seed1, seed2]) => {
+      const t1 = teams.find(t => t.seed === seed1);
+      const t2 = teams.find(t => t.seed === seed2);
+      return [t1, t2];
+    });
+
+    return `
+      <div class="sec-title" style="border-left:3px solid ${regionColors[region]};padding-left:8px;${region !== "East" ? "margin-top:14px;" : ""}">
+        ${region} · Round of 64
+      </div>
+      ${matchups.map(([t1, t2]) => {
+        const owner1 = teamOwner[t1.name];
+        const owner2 = teamOwner[t2.name];
+        const c1 = owner1 && PLAYER_COLORS[owner1];
+        const c2 = owner2 && PLAYER_COLORS[owner2];
+        const playin1 = playinTeams.has(t1.name) ? " bk-playin" : "";
+        const playin2 = playinTeams.has(t2.name) ? " bk-playin" : "";
+        const elim1 = eliminated.has(t1.name) ? "opacity:0.35;text-decoration:line-through;" : "";
+        const elim2 = eliminated.has(t2.name) ? "opacity:0.35;text-decoration:line-through;" : "";
+
+        return `<div class="bk-match">
+          <div class="bk-team${playin1}" style="${elim1}">
+            <span class="bk-seed">${t1.seed}</span>
+            <span class="bk-name">${t1.name}</span>
+            ${c1 ? `<span class="bk-own" style="background:${c1.bg};color:${c1.color};padding:1px 6px;border-radius:99px;font-style:normal;font-weight:500;">${owner1}</span>` : `<span class="bk-own">TBD</span>`}
+          </div>
+          <div class="bk-team${playin2}" style="${elim2}">
+            <span class="bk-seed">${t2.seed}</span>
+            <span class="bk-name">${t2.name}</span>
+            ${c2 ? `<span class="bk-own" style="background:${c2.bg};color:${c2.color};padding:1px 6px;border-radius:99px;font-style:normal;font-weight:500;">${owner2}</span>` : `<span class="bk-own">TBD</span>`}
+          </div>
+        </div>`;
+      }).join("")}
+    `;
+  };
+
+  const regionProgressBlock = (region) => {
+    const r32 = getRoundGames("Round of 32", region);
+    const s16 = getRoundGames("Sweet 16", region);
+    const e8 = getRoundGames("Elite 8", region);
+
+    return `
+      <div style="margin-top:10px;">
+        <div class="sec-title">${region} path</div>
+
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;color:#888;margin-bottom:6px;">Round of 32</div>
+          ${r32.map(g => renderBracketGameCard(g, true)).join("")}
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <div style="font-size:11px;color:#888;margin-bottom:6px;">Sweet 16</div>
+          ${s16.map(g => renderBracketGameCard(g, true)).join("")}
+        </div>
+
+        <div>
+          <div style="font-size:11px;color:#888;margin-bottom:6px;">Elite 8</div>
+          ${e8.map(g => renderBracketGameCard(g, true)).join("")}
+        </div>
+      </div>
+    `;
+  };
+
+  const finalFourGames = getRoundGames("Final Four");
+  const champGames = getRoundGames("Championship");
+
+  document.getElementById("bracket-content").innerHTML = `
+    ${Object.entries(ALL_TEAMS_BY_REGION).map(initialRegionBlock).join("")}
+
+    <div style="margin-top:18px;">
+      ${["East","South","West","Midwest"].map(regionProgressBlock).join("")}
+    </div>
+
+    <div style="margin-top:18px;">
+      <div class="sec-title">Final Four</div>
+      ${finalFourGames.map(g => renderBracketGameCard(g)).join("")}
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="sec-title">Championship</div>
+      ${champGames.map(g => renderBracketGameCard(g)).join("")}
+    </div>
+  `;
+}
+
+function buildDraftOrderInputs() {
+  const mockOrder = { Mitch:1, Blaine:2, Carson:3, Guy:4, Josh:5, Shane:6, Sutton:7, Kent:8 };
+  document.getElementById("draft-order-inputs").innerHTML = PLAYERS.map((p,i) => `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="font-size:13px;min-width:60px;color:#111;">${p}</div>
+      <select id="draft-pos-${i}" style="flex:1;">
+        <option value="">Pick #...</option>
+        ${[1,2,3,4,5,6,7,8].map(n => `<option value="${n}" ${mockOrder[p] === n ? "selected" : ""}>${n}</option>`).join("")}
+      </select>
+    </div>
+  `).join("");
+}
+
+function renderFinalResults() {
+  const byPlayer = {};
+  PLAYERS.forEach(p => byPlayer[p] = []);
+  Object.values(allPicks).sort((a,b) => (a.pickNum || 0) - (b.pickNum || 0)).forEach(p => {
+    if (byPlayer[p.player]) byPlayer[p.player].push(p.team);
+  });
+
+  document.getElementById("draft-final-results").innerHTML = PLAYERS.map(p => `
+    <div style="background:#fff;border:0.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
+      <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px;">${p}</div>
+      <div style="font-size:12px;color:#555;">${(byPlayer[p] || []).join(", ") || "No picks"}</div>
+    </div>
+  `).join("");
 }
 
 function renderDraftTab() {
@@ -910,6 +1181,7 @@ function renderDraftTab() {
   document.getElementById("draft-active-view").style.display = "none";
   document.getElementById("draft-complete-view").style.display = "none";
   document.getElementById("draft-admin-controls").style.display = "none";
+  document.getElementById("draft-reset-btn").style.display = "none";
 
   if (complete) {
     document.getElementById("draft-complete-view").style.display = "block";
@@ -943,7 +1215,7 @@ function renderDraftTab() {
   const currentPlayer = getSnakePlayer(draftOrder, picksCount);
   const round = Math.floor(picksCount / 8) + 1;
   document.getElementById("draft-round-label").textContent = `Round ${round} · Pick ${picksCount + 1} of 64`;
-  document.getElementById("draft-current-player").textContent = currentPlayer;
+  document.getElementById("draft-current-player").textContent = currentPlayer || "...";
 
   const draftedTeams = new Set(sortedPicks.map(p => p.team));
   const isMyTurn = isAdmin || myIdentity === currentPlayer;
@@ -953,7 +1225,7 @@ function renderDraftTab() {
     document.getElementById("draft-my-turn-view").style.display = "block";
     document.getElementById("draft-waiting-view").style.display = "none";
 
-    const q = (document.getElementById("draft-search").value || "").toLowerCase();
+    const q = (document.getElementById("draft-search")?.value || "").toLowerCase();
     const regionColors = { East:"#378ADD", South:"#1D9E75", West:"#D85A30", Midwest:"#7F77DD" };
 
     document.getElementById("draft-teams-list").innerHTML = Object.entries(ALL_TEAMS_BY_REGION).map(([region, teams]) => {
@@ -990,19 +1262,6 @@ function renderDraftTab() {
   `).join("") : '<div class="empty" style="padding:12px;">No picks yet</div>';
 }
 
-function buildDraftOrderInputs() {
-  const mockOrder = { Mitch:1, Blaine:2, Carson:3, Guy:4, Josh:5, Shane:6, Sutton:7, Kent:8 };
-  document.getElementById("draft-order-inputs").innerHTML = PLAYERS.map((p,i) => `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <div style="font-size:13px;min-width:60px;color:#111;">${p}</div>
-      <select id="draft-pos-${i}" style="flex:1;">
-        <option value="">Pick #...</option>
-        ${[1,2,3,4,5,6,7,8].map(n => `<option value="${n}" ${mockOrder[p] === n ? "selected" : ""}>${n}</option>`).join("")}
-      </select>
-    </div>
-  `).join("");
-}
-
 window.saveDraftOrder = async () => {
   const msg = document.getElementById("draft-setup-msg");
   const order = new Array(8);
@@ -1013,7 +1272,7 @@ window.saveDraftOrder = async () => {
     const val = document.getElementById(`draft-pos-${i}`)?.value;
     if (!val || used.has(val)) { valid = false; return; }
     used.add(val);
-    order[parseInt(val) - 1] = p;
+    order[parseInt(val, 10) - 1] = p;
   });
 
   if (!valid || order.some(x => !x)) {
@@ -1034,11 +1293,18 @@ window.setDraftIdentity = (name) => {
 window.filterTeams = () => renderDraftTab();
 
 window.makePick = async (team) => {
-  const picksCount = Object.keys(allPicks).length;
+  const picks = Object.values(allPicks);
+  const picksCount = picks.length;
   if (picksCount >= 64) return;
+
+  const draftedTeams = new Set(picks.map(p => p.team));
+  if (draftedTeams.has(team)) return;
+
+  if (!draftOrder || draftOrder.length !== 8) return;
 
   const currentPlayer = getSnakePlayer(draftOrder, picksCount);
   const myIdentity = sessionStorage.getItem("draft_identity");
+
   if (!isAdmin && myIdentity !== currentPlayer) return;
 
   await push(ref(db, "draft/picks"), {
@@ -1097,7 +1363,7 @@ window.populateWinnerDropdown = () => {
 
   winnerSel.innerHTML = '<option value="">Select winner...</option>';
   ownerSel.innerHTML = '<option value="">Auto-filled...</option>';
-  preview.textContent = "Select winner...";
+  preview.textContent = "Select a matchup and winner...";
 
   if (!matchupId) return;
 
@@ -1155,6 +1421,14 @@ window.logGame = async () => {
     return;
   }
 
+  const alreadyLogged = Object.values(games).some(g => g.gameId === matchupId);
+  if (alreadyLogged) {
+    msg.className = "";
+    msg.textContent = "That game has already been logged.";
+    populateMatchupDropdown();
+    return;
+  }
+
   const game = findBracketGame(matchupId);
   const { team1, team2 } = resolveGameTeams(game);
 
@@ -1164,13 +1438,13 @@ window.logGame = async () => {
     return;
   }
 
-  const loser = winner === team1 ? team2 : team1;
-  if (!loser) {
+  if (winner !== team1 && winner !== team2) {
     msg.className = "";
-    msg.textContent = "Could not determine losing team.";
+    msg.textContent = "Winner does not match the selected matchup.";
     return;
   }
 
+  const loser = winner === team1 ? team2 : team1;
   const type = getWinType(winner, loser);
   const pts = type === "Upset" ? 2 : 1;
 
@@ -1196,63 +1470,6 @@ window.logGame = async () => {
   msg.textContent = `Added: ${winner} over ${loser} (${type}, +${pts} pt${pts > 1 ? "s" : ""})`;
   setTimeout(() => { msg.textContent = ""; }, 3000);
 };
-
-function renderBracket() {
-  const teamOwner = getTeamOwnerMap();
-  const eliminated = getEliminatedTeams();
-  const regionColors = { East:"#378ADD", South:"#1D9E75", West:"#D85A30", Midwest:"#7F77DD" };
-  const playinTeams = new Set(["Lehigh/Prairie View","Texas/NC State","UMBC/Howard","Miami OH/SMU"]);
-
-  document.getElementById("bracket-content").innerHTML = Object.entries(ALL_TEAMS_BY_REGION).map(([region, teams]) => {
-    const matchups = SEED_MATCHUPS.map(([seed1, seed2]) => {
-      const t1 = teams.find(t => t.seed === seed1);
-      const t2 = teams.find(t => t.seed === seed2);
-      return [t1, t2];
-    });
-
-    return `
-      <div class="sec-title" style="border-left:3px solid ${regionColors[region]};padding-left:8px;${region !== "East" ? "margin-top:14px;" : ""}">${region}</div>
-      ${matchups.map(([t1, t2]) => {
-        const owner1 = teamOwner[t1.name];
-        const owner2 = teamOwner[t2.name];
-        const c1 = owner1 && PLAYER_COLORS[owner1];
-        const c2 = owner2 && PLAYER_COLORS[owner2];
-        const playin1 = playinTeams.has(t1.name) ? " bk-playin" : "";
-        const playin2 = playinTeams.has(t2.name) ? " bk-playin" : "";
-        const elim1 = eliminated.has(t1.name) ? "opacity:0.35;text-decoration:line-through;" : "";
-        const elim2 = eliminated.has(t2.name) ? "opacity:0.35;text-decoration:line-through;" : "";
-
-        return `<div class="bk-match">
-          <div class="bk-team${playin1}" style="${elim1}">
-            <span class="bk-seed">${t1.seed}</span>
-            <span class="bk-name">${t1.name}</span>
-            ${c1 ? `<span class="bk-own" style="background:${c1.bg};color:${c1.color};padding:1px 6px;border-radius:99px;font-style:normal;font-weight:500;">${owner1}</span>` : `<span class="bk-own">TBD</span>`}
-          </div>
-          <div class="bk-team${playin2}" style="${elim2}">
-            <span class="bk-seed">${t2.seed}</span>
-            <span class="bk-name">${t2.name}</span>
-            ${c2 ? `<span class="bk-own" style="background:${c2.bg};color:${c2.color};padding:1px 6px;border-radius:99px;font-style:normal;font-weight:500;">${owner2}</span>` : `<span class="bk-own">TBD</span>`}
-          </div>
-        </div>`;
-      }).join("")}
-    `;
-  }).join("");
-}
-
-function renderFinalResults() {
-  const byPlayer = {};
-  PLAYERS.forEach(p => byPlayer[p] = []);
-  Object.values(allPicks).sort((a,b) => (a.pickNum || 0) - (b.pickNum || 0)).forEach(p => {
-    if (byPlayer[p.player]) byPlayer[p.player].push(p.team);
-  });
-
-  document.getElementById("draft-final-results").innerHTML = PLAYERS.map(p => `
-    <div style="background:#fff;border:0.5px solid #e0e0e0;border-radius:8px;padding:10px 12px;margin-bottom:6px;">
-      <div style="font-size:13px;font-weight:500;color:#111;margin-bottom:4px;">${p}</div>
-      <div style="font-size:12px;color:#555;">${(byPlayer[p] || []).join(", ") || "No picks"}</div>
-    </div>
-  `).join("");
-}
 </script>
 </body>
 </html>
