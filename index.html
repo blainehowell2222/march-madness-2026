@@ -768,6 +768,7 @@ function getLeaderboardMeta() {
   const aliveByPlayer = getTeamsAliveByPlayer();
   const result = {};
 
+  // Compute maxPossible for every player
   PLAYERS.forEach(player => {
     const aliveTeams = aliveByPlayer[player] || [];
     const futurePoints = getPlayerFutureMax(player);
@@ -780,10 +781,23 @@ function getLeaderboardMeta() {
     };
   });
 
-  const currentLeaderPoints = Math.max(...PLAYERS.map(p => scores[p].total), 0);
+  // Sort players by current score descending to find the prize cutoff threshold.
+  // A player is eliminated if their maxPossible can't reach the current 3rd-place
+  // score — meaning no matter what happens they can't finish in the money.
+  // We use a "displaced 3rd place" threshold: the minimum score a player would need
+  // to overtake 3rd place is the current 3rd-place player's score (ties go to the
+  // challenger, so strictly greater than is NOT required — matching is enough to
+  // stay alive for a prize).
+  const sortedByScore = PLAYERS.slice().sort((a, b) => scores[b].total - scores[a].total);
+
+  // The 3rd-place threshold is the score of the player currently in 3rd place.
+  // If fewer than 3 players have scored, use 0.
+  const thirdPlaceScore = scores[sortedByScore[Math.min(2, sortedByScore.length - 1)]].total;
 
   PLAYERS.forEach(player => {
-    result[player].eliminated = result[player].maxPossible < currentLeaderPoints;
+    // A player is eliminated if their best possible total is strictly less than
+    // the current 3rd-place score. Matching 3rd place keeps them alive (tie).
+    result[player].eliminated = result[player].maxPossible < thirdPlaceScore;
   });
 
   return result;
@@ -927,7 +941,25 @@ function renderLeaderboard() {
     const s = scores[p];
     const m = meta[p];
     const prize = i < 3 && s.total > 0 ? "$" + PRIZES[i] : "";
-    const status = m.eliminated ? "Eliminated" : "Alive";
+
+    // Status label: show prize position for top 3, eliminated for those who can't reach top 3
+    let statusLabel, statusColor;
+    if (m.eliminated) {
+      statusLabel = "Eliminated";
+      statusColor = "#c00";
+    } else if (i === 0) {
+      statusLabel = "🥇 In the money";
+      statusColor = "#2a7a2a";
+    } else if (i === 1) {
+      statusLabel = "🥈 In the money";
+      statusColor = "#2a7a2a";
+    } else if (i === 2) {
+      statusLabel = "🥉 In the money";
+      statusColor = "#2a7a2a";
+    } else {
+      statusLabel = "Still alive";
+      statusColor = "#2a7a2a";
+    }
 
     return `<div class="lb-row">
       <div style="width:28px;font-size:15px;text-align:center;">${medals[i] || (i+1)}</div>
@@ -937,7 +969,7 @@ function renderLeaderboard() {
           <div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(s.total/max*100)}%"></div></div>
           <div style="font-size:10px;color:#aaa;">${s.fav}f · ${s.ups}u · ${m.alive} alive · max ${m.maxPossible}</div>
         </div>
-        <div style="font-size:10px;color:${m.eliminated ? "#c00" : "#2a7a2a"};margin-top:3px;">${status}</div>
+        <div style="font-size:10px;color:${statusColor};margin-top:3px;">${statusLabel}</div>
       </div>
       <div class="lb-pts">${s.total}</div>
       <div class="lb-prize">${prize}</div>
