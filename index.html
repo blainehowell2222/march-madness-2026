@@ -101,6 +101,7 @@ select:focus, input:focus { border-color: #E8650A; }
 
   <!-- LEADERBOARD -->
   <div id="tab-leaderboard" class="panel active">
+    <div id="champion-banner" style="display:none;"></div>
     <div id="lb-list"><div class="empty">Connecting...</div></div>
     <div style="font-size:11px;color:#aaa;text-align:center;padding-top:4px;">1 pt · favored &nbsp;|&nbsp; 2 pts · upset &nbsp;|&nbsp; prizes: 🥇$200 · 🥈$125 · 🥉$75</div>
   </div>
@@ -194,7 +195,7 @@ select:focus, input:focus { border-color: #E8650A; }
       <div class="form-row">
         <div class="form-group">
           <label>Round</label>
-          <select id="inp-round" onchange="populateTeamDropdown()">
+          <select id="inp-round" onchange="document.getElementById('inp-team').value='';document.getElementById('inp-owner').innerHTML='<option value=\\'\\'>Auto-filled...</option>';document.getElementById('loser-group').style.display='none';window.selectType('');populateTeamDropdown()">
             <option value="">Select round...</option>
             <option>Round of 64</option><option>Round of 32</option><option>Sweet 16</option>
             <option>Elite 8</option><option>Final Four</option><option>Championship</option>
@@ -382,6 +383,47 @@ function getScores() {
 }
 
 function renderLeaderboard() {
+  // Check if championship has been logged
+  const championship = Object.values(games).find(g => g.round === "Championship");
+  const banner = document.getElementById("champion-banner");
+
+  if(championship) {
+    const champTeam = championship.team;
+    const allGames = Object.values(games);
+    const totalUpsets = allGames.filter(g => g.type === "Upset").length;
+    const biggestUpset = allGames
+      .filter(g => g.type === "Upset" && TEAM_DATA[g.team])
+      .sort((a,b) => TEAM_DATA[b.team].seed - TEAM_DATA[a.team].seed)[0];
+
+    // Find pool winner (most points)
+    const scores = getScores();
+    const sorted = PLAYERS.slice().sort((a,b) => scores[b].total - scores[a].total);
+    const poolWinner = sorted[0];
+    const poolWinnerPts = scores[poolWinner].total;
+    const pc = PLAYER_COLORS[poolWinner] || {bg:"#FFF3CD",color:"#854F0B"};
+
+    banner.style.display = "block";
+    banner.innerHTML = `
+      <div style="background:#1A1A2E;border-radius:12px;padding:20px;text-align:center;margin-bottom:16px;color:white;">
+        <div style="font-size:48px;margin-bottom:8px;">🏆</div>
+        <div style="font-size:13px;opacity:0.8;margin-bottom:4px;">2026 Pool Champion</div>
+        <div style="font-size:28px;font-weight:500;margin-bottom:4px;">${poolWinner}</div>
+        <div style="font-size:14px;opacity:0.7;margin-bottom:8px;">${poolWinnerPts} points · $200</div>
+        <div style="font-size:12px;opacity:0.6;margin-bottom:14px;">NCAA Champion: ${champTeam}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
+            <div style="font-size:11px;opacity:0.8;">Total upsets</div>
+            <div style="font-size:20px;font-weight:500;">${totalUpsets}</div>
+          </div>
+          <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:10px;">
+            <div style="font-size:11px;opacity:0.8;">Biggest upset</div>
+            <div style="font-size:13px;font-weight:500;">${biggestUpset ? `(${TEAM_DATA[biggestUpset.team].seed}) ${biggestUpset.team}` : "—"}</div>
+          </div>
+        </div>
+      </div>`;
+  } else {
+    banner.style.display = "none";
+  }
   const scores = getScores();
   const sorted = PLAYERS.slice().sort((a,b) => scores[b].total - scores[a].total);
   const max = Math.max(1, scores[sorted[0]].total);
